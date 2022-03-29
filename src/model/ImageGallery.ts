@@ -13,6 +13,7 @@ import { Product } from "./Product";
 
 @Entity("image_gallery")
 export class ImageGallery {
+  
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -37,4 +38,6 @@ export class ImageGallery {
 
   @ManyToMany(() => News)
   news: News;
+
+  
 }

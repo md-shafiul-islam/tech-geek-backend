@@ -34,6 +34,6 @@ export class Specification {
   @JoinColumn({ name: "product" })
   product: Product;
 
-  @Column({name:"is_key_feature"})
+  @Column({name:"is_key_feature", default:false})
   isFeature:boolean;
 }

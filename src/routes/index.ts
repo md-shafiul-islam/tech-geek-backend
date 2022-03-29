@@ -1,6 +1,7 @@
 import { Application, Express, Request, Response } from "express";
 import { brandRoute } from "./brand.route";
 import { categoryRoute } from "./category.route";
+import { metaRoute } from "./metadata.route";
 import { newsRoute } from "./news.route";
 import { postRoute } from "./post.route";
 import { productRoute } from "./product.route";
@@ -8,6 +9,8 @@ import { ratingRoute } from "./rating.route";
 import { reviewRoute } from "./review.route";
 import { specKeyRoute } from "./spec.key.route";
 import { specTypeRoute } from "./spec.type.route";
+import { specificationRoute } from "./specification.route";
+import { tagRoute } from "./tag.route";
 import { userRoute } from "./user.route";
 
 const userUrl = `/api/users`;
@@ -20,10 +23,11 @@ const reviewUrl = `/api/reviews`;
 const specKeyUrl = `/api/specification-keys`;
 const specTypeUrl = `/api/specification-types`;
 const newsUrl = `/api/news`;
- 
+const specificationUrl = "/api/specifications";
+const metaUrl = "/api/meta-datas";
+const tagUrl = "/api/tags";
 
 export default (app: Application) => {
-
   app.use(userUrl, userRoute);
   app.use(brandUrl, brandRoute);
   app.use(categoryUrl, categoryRoute);
@@ -34,6 +38,9 @@ export default (app: Application) => {
   app.use(specKeyUrl, specKeyRoute);
   app.use(specTypeUrl, specTypeRoute);
   app.use(newsUrl, newsRoute);
+  app.use(specificationUrl, specificationRoute);
+  app.use(metaUrl, metaRoute);
+  app.use(tagUrl, tagRoute);
 
   app.get("/", (req: Request, resp: Response) => {
     resp.sendStatus(200);

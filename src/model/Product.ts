@@ -2,6 +2,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
   ManyToMany,
   ManyToOne,
   MaxKey,
@@ -61,9 +62,19 @@ export class Product {
   images: ImageGallery[];
 
   @ManyToMany(() => Tag, (tag: Tag) => tag.products)
+  @JoinTable({
+    name: "product_tag",
+    joinColumn: { name: "product", referencedColumnName: "id" },
+    inverseJoinColumn: { name: "tag", referencedColumnName: "id" },
+  })
   tags: Tag[];
 
   @ManyToMany(() => MetaDeta, (metadata: MetaDeta) => metadata.products)
+  @JoinTable({
+    name: "product_meta",
+    joinColumn: { name: "id", referencedColumnName: "id" },
+    inverseJoinColumn: { name: "meta", referencedColumnName: "id" },
+  })
   metaDatas: MetaDeta[];
 
   @ManyToOne(() => Brand, (brand: Brand) => brand.products)
@@ -76,6 +87,6 @@ export class Product {
   @OneToMany(() => Review, (review: Review) => review.product)
   reviews: Review[];
 
-  @OneToMany(()=>Rating, (rating:Rating)=>rating.product)
-  ratings:Rating[]
+  @OneToMany(() => Rating, (rating: Rating) => rating.product)
+  ratings: Rating[];
 }

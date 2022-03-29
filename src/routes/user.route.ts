@@ -3,14 +3,14 @@ import { userController } from "../controller/user.controller";
 
 const userRoute = express.Router();
 
-userRoute.get("/", userController.getUsers);
+userRoute.get("/", userController.getAll);
 
-userRoute.get(`/:id`, userController.getUserById);
+userRoute.get(`/:id`, userController.getById);
 
-userRoute.post("/", userController.addUser);
+userRoute.post("/", userController.add);
 
-userRoute.put("/", userController.updateUser);
+userRoute.put("/", userController.update);
 
-userRoute.delete(`/:id`, userController.deleteUser);
+userRoute.delete(`/:id`, userController.delete);
 
 export { userRoute };

@@ -1,4 +1,4 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Product } from "./Product";
 import { User } from "./User";
 
@@ -6,7 +6,10 @@ import { User } from "./User";
 export class Rating {
     
     @PrimaryGeneratedColumn()
-    id:string;
+    id:number;
+
+    @Column({name:"public_id"})
+    publicId:string;
 
     @ManyToOne(()=>User, (user:User)=>user.id)
     @JoinColumn({name:"author"})

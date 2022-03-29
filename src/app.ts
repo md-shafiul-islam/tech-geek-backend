@@ -7,6 +7,7 @@ import config from "../config/default";
 import log from "./logger/index";
 import routes from "./routes";
 import { AppDataSource } from "./database/AppDataSource";
+import errorMiddleware from "./middleware/error.middleware";
 
 class App {
   port = config.appPort as number;
@@ -36,6 +37,7 @@ class App {
   initializeMiddlewares() {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
+    this.app.use(errorMiddleware);
   }
 
   public getServer() {

@@ -14,10 +14,10 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({name:"first_name"})
+  @Column({ name: "first_name" })
   firstName: string;
 
-  @Column({name:"last_name"})
+  @Column({ name: "last_name" })
   lastName: string;
 
   @OneToMany(() => Product, (product: Product) => product.user)
@@ -29,6 +29,6 @@ export class User {
   @OneToMany(() => News, (news: News) => news.user)
   news: News[];
 
-  @Column({ name: "is_active" })
+  @Column({ name: "is_active", default: false })
   isActive: boolean;
 }

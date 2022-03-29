@@ -6,6 +6,8 @@ const categoryRoute = express.Router();
 
 categoryRoute.get("/", categoryController.getAll);
 
+categoryRoute.get("/tree", categoryController.getCategoryTree);
+
 categoryRoute.get(`/:id`, categoryController.getById);
 
 categoryRoute.post("/", categoryController.add);

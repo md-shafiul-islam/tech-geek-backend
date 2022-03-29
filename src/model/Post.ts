@@ -18,7 +18,10 @@ import { User } from "./User";
 @Entity({ name: "post" })
 export class Post {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
+
+  @Column({name:"public_id"})
+  publicId:string;
 
   @Column({ length: 150 })
   title: string;

@@ -1,11 +1,13 @@
 import { Repository } from "typeorm";
 import { AppDataSource } from "../database/AppDataSource";
+import { apiWriteLog } from "../logger/writeLog";
 import { Brand } from "../model/Brand";
+import { esIsEmpty } from "../utils/esHelper";
 
 class BrandService {
-  brandRepository: Repository<Brand> | null = null;
+  private brandRepository: Repository<Brand> | null = null;
 
-  initRepository() {
+  private initRepository(): void {
     if (this.brandRepository === null) {
       this.brandRepository = AppDataSource.getRepository(Brand);
     }
@@ -19,7 +21,7 @@ class BrandService {
 
         return resp;
       } catch (error) {
-        throw new Error("Brand Save Failed ");
+        apiWriteLog.error("Brand Save Failed ");
       }
     }
     return null;
@@ -31,7 +33,7 @@ class BrandService {
       const brand = await this.brandRepository?.findOne({ where: { id: id } });
       return brand;
     } catch (err) {
-      console.log("Error getBrandByID ", err);
+      apiWriteLog.error("Error getBrandByID ", err);
       return null;
     }
   }
@@ -42,18 +44,52 @@ class BrandService {
       const brands = await this.brandRepository?.find();
       return brands;
     } catch (err) {
-      console.log("Error All Brand ", err);
+      apiWriteLog.error(`Error All Brand `, err);
       return null;
     }
   }
 
-  async deleteBrand(id:number) {
+  async updateBrand(brand: Brand): Promise<Brand | null | undefined> {
+    this.initRepository();
+    if (!esIsEmpty(brand)) {
+      let id: number = 0;
+      id = !esIsEmpty(brand.id) ? Number(brand.id) : 0;
+      if (id > 0) {
+        try {
+          const dbBrand = await this.brandRepository?.findOneBy({ id });
+          if (dbBrand !== null && dbBrand !== undefined) {
+            dbBrand.description = !esIsEmpty(brand.description)
+              ? brand.description
+              : dbBrand.description;
+            dbBrand.logoUrl = !esIsEmpty(brand.logoUrl)
+              ? brand.logoUrl
+              : dbBrand.logoUrl;
+            dbBrand.name = !esIsEmpty(brand.name) ? brand.name : dbBrand?.name;
+            dbBrand.tagLine = !esIsEmpty(brand.tagLine)
+              ? brand.tagLine
+              : dbBrand.tagLine;
+            dbBrand.website = !esIsEmpty(brand.website)
+              ? brand.website
+              : dbBrand.website;
+
+            const updateBrand = await this.brandRepository?.save(dbBrand);
+            return updateBrand;
+          }
+        } catch (error) {
+          apiWriteLog.error(`Update Brand Error, `, error);
+          return null;
+        }
+      }
+    }
+    return null;
+  }
+  async deleteBrand(id: number) {
     this.initRepository();
     try {
-      const brands = await this.brandRepository?.delete({id:id});
+      const brands = await this.brandRepository?.delete({ id: id });
       return brands;
     } catch (err) {
-      console.log("Error All Brand ", err);
+      apiWriteLog.error("Error All Brand ", err);
       return null;
     }
   }

@@ -9,7 +9,7 @@ export class SpecKey {
   @Column({ length: 105, unique: true })
   name: string;
 
-  @Column({ length: 155 })
+  @Column({ length: 155, default: "" })
   value: string;
 
   @OneToMany(() => Specification, (spc: Specification) => spc.key)

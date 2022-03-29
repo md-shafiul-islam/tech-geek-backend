@@ -10,7 +10,7 @@ export class SpecificationType {
   @Column({ length: 100, unique: true })
   name: string;
 
-  @Column({ length: 105 })
+  @Column({ length: 105, default:"" })
   value: string;
 
   @OneToMany(() => Specification, (spc:Specification)=>spc.specType)

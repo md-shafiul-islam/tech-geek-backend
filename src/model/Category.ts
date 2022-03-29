@@ -4,14 +4,21 @@ import {
   JoinColumn,
   OneToMany,
   PrimaryGeneratedColumn,
+  Tree,
   TreeChildren,
   TreeParent,
+  TreeLevelColumn,
 } from "typeorm";
 import { News } from "./News";
 import { Post } from "./Post";
 import { Product } from "./Product";
 
 @Entity({ name: "category" })
+@Tree("closure-table", {
+  closureTableName: "category_closure",
+  ancestorColumnName: (column) => "parent" + column.propertyName,
+  descendantColumnName: (column) => "children" + column.propertyName,
+})
 export class Category {
   @PrimaryGeneratedColumn()
   id: number;
@@ -28,7 +35,6 @@ export class Category {
   children: Category[];
 
   @TreeParent()
-  @JoinColumn({ name: "parent_id" })
   parent: Category;
 
   @OneToMany(() => Product, (product) => product.category)

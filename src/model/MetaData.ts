@@ -13,7 +13,7 @@ export class MetaDeta{
     @Column({length:75})
     name:string
 
-    @Column({type:"text"})
+    @Column({type:"text", default:null})
     content:string
 
     @ManyToMany(()=>Product)
