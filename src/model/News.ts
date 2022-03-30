@@ -20,6 +20,9 @@ export class News {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({name:"ally_name"})
+  allyName:string;
+
   @Column({ length: 205 })
   title: string;
 
@@ -71,4 +74,45 @@ export class News {
 
   @Column({ name: "update_date", type: "datetime" })
   updateDate: Date;
+
+  addImage(image: ImageGallery) {
+    if (!Array.isArray(this.images)) {
+      this.images = new Array<ImageGallery>();
+    }
+    this.images.push(image);
+  }
+
+  addAllImage(imgs: ImageGallery[]) {
+    if (!Array.isArray(this.images)) {
+      this.images = new Array<ImageGallery>();
+    }
+    this.images.push.apply(this.images, imgs);
+  }
+
+  addMetaData(meta: MetaDeta) {
+    if (!Array.isArray(this.metaDatas)) {
+      this.metaDatas = new Array<MetaDeta>();
+    }
+    this.metaDatas.push(meta);
+  }
+
+  addAllMeta(metas: MetaDeta[]) {
+    if (!Array.isArray(this.metaDatas)) {
+      this.metaDatas = new Array<MetaDeta>();
+    }
+    this.metaDatas.push.apply(this.metaDatas, metas);
+  }
+  addTag(tag: Tag) {
+    if (!Array.isArray(this.tags)) {
+      this.tags = new Array<Tag>();
+    }
+    this.tags.push(tag);
+  }
+
+  addAllTag(tgs: Tag[]) {
+    if (!Array.isArray(this.tags)) {
+      this.tags = new Array<Tag>();
+    }
+    this.tags.push.apply(this.tags, tgs);
+  }
 }

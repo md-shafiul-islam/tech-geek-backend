@@ -1,0 +1,60 @@
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Tree,
+  TreeChildren,
+  TreeParent,
+  UpdateDateColumn,
+} from "typeorm";
+import { News } from "./News";
+import { Post } from "./Post";
+import { Product } from "./Product";
+import { User } from "./User";
+
+@Entity({ name: "comment" })
+@Tree("closure-table", {
+  closureTableName: "comment_closure",
+  ancestorColumnName: (column) => "parent" + column.propertyName,
+  descendantColumnName: (column) => "children" + column.propertyName,
+})
+export class Comment {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ name: "content", type: "text" })
+  content: string;
+
+  @Column({ name: "author" })
+  author: User;
+
+  @Column({ name: "approve_user" })
+  approveUser: User;
+
+  @ManyToOne(() => Product, (product: Product) => product.id)
+  @JoinColumn({ name: "product", referencedColumnName: "id" })
+  product: Product;
+
+  @ManyToOne(() => News, (news: News) => news.id)
+  @JoinColumn({ name: "news", referencedColumnName: "id" })
+  news: News;
+
+  @ManyToOne(() => Post, (post: Post) => post.id)
+  @JoinColumn({ name: "post", referencedColumnName: "id" })
+  post: Post;
+
+  @TreeChildren()
+  children: Comment[];
+
+  @TreeParent()
+  parent: Comment;
+
+  @CreateDateColumn({ name: "create_date" })
+  createDate: Date;
+
+  @UpdateDateColumn({ name: "update_date" })
+  updateDate: Date;
+}

@@ -2,11 +2,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Generated,
   JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from "typeorm";
 import { Brand } from "./Brand";
 import { Category } from "./Category";
@@ -20,8 +22,12 @@ export class Post {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({name:"public_id"})
-  publicId:string;
+  @Column({ name: "public_id", unique: true })
+  @Generated("uuid")
+  publicId: string;
+
+  @Column({ name: "ally_name", unique: true })
+  allyName: string;
 
   @Column({ length: 150 })
   title: string;
@@ -29,7 +35,7 @@ export class Post {
   @Column("text")
   content: string;
 
-  @ManyToOne(() => User, (user: User) => user.id)
+  @ManyToOne(() => User, (user: User) => user.id, { nullable: true })
   @JoinColumn({ name: "approve_user" })
   user: User;
 
@@ -48,7 +54,7 @@ export class Post {
   @ManyToMany(() => Tag, (tag: Tag) => tag.posts)
   @JoinTable({
     name: "posts_tags",
-    joinColumn: { name: "post" },
+    joinColumn: { name: "post", referencedColumnName: "id" },
     inverseJoinColumn: { name: "tag", referencedColumnName: "id" },
   })
   tags: Tag[];
@@ -72,6 +78,48 @@ export class Post {
   @CreateDateColumn()
   createdDate: Date;
 
-  @Column({ name: "update_date" })
+  @UpdateDateColumn({ name: "update_date" })
   updateDate: Date;
+
+  addAllImage(imgs: ImageGallery[]) {
+    if (!Array.isArray(this.images)) {
+      this.images = new Array<ImageGallery>();
+    }
+    this.images.push.apply(this.images, imgs);
+  }
+
+  addImage(image: ImageGallery) {
+    if (!Array.isArray(this.images)) {
+      this.images = new Array<ImageGallery>();
+    }
+    this.images.push(image);
+  }
+
+  addAllTag(tgs: Tag[]) {
+    if (!Array.isArray(this.tags)) {
+      this.tags = new Array<Tag>();
+    }
+    this.tags.push.apply(this.tags, tgs);
+  }
+
+  addTag(tag: Tag) {
+    if (!Array.isArray(this.tags)) {
+      this.tags = new Array<Tag>();
+    }
+    this.tags.push(tag);
+  }
+
+  addAllMetaData(metas: MetaDeta[]) {
+    if (!Array.isArray(this.metaDatas)) {
+      this.metaDatas = new Array<MetaDeta>();
+    }
+    this.metaDatas.push.apply(this.metaDatas, metas);
+  }
+
+  addMeta(metaData: MetaDeta) {
+    if (!Array.isArray(this.metaDatas)) {
+      this.metaDatas = new Array<MetaDeta>();
+    }
+    this.metaDatas.push(metaData);
+  }
 }

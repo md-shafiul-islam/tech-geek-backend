@@ -20,7 +20,6 @@ class ProductService {
   }
 
   async save(product: Partial<Product>) {
-    this.initRepository();
     let saveProduct: Product | undefined | null = null;
     if (product) {
       const nProduct: Product = this.mapProduct(product);
@@ -30,73 +29,73 @@ class ProductService {
       await queryRunner.startTransaction();
 
       try {
-        let metaDatas: MetaDeta[] = [];
         let specs: Specification[] = [];
-        let tags: Tag[] = [];
+        const metaDatas: MetaDeta[] = [];
+        const tags: Tag[] = [];
 
         let user = await queryRunner.manager.findOne(User, {
           where: { id: 1 },
         });
 
         //Save New Metatdata
+
         if (product.metaDatas) {
-          product.metaDatas.forEach(async (item) => {
+          product.metaDatas.forEach(async (item, idx) => {
             if (item.id > 0) {
-              metaDatas.push(item);
+              nProduct.addMetaData(item);
             } else {
               const insMetaData = queryRunner.manager.create(MetaDeta, item);
-              const dbItem = await queryRunner.manager.save(insMetaData);
-              if (dbItem !== undefined && dbItem !== null) {
-                metaDatas.push(dbItem);
-              }
+              metaDatas.push(insMetaData);
             }
           });
         }
 
+        const metaDataList = await queryRunner.manager.save(
+          MetaDeta,
+          metaDatas
+        );
+        console.log(
+          "After Save Metadat Array ",
+          JSON.stringify(metaDataList, null, 2)
+        );
         //Save new Tags
         if (product.tags) {
-          product.tags.forEach(async (item) => {
+          product.tags.forEach(async (item, idx) => {
             if (item.id > 0) {
-              tags.push(item);
+              nProduct.addTag(item);
+              item.products = [nProduct];
             } else {
               const insTag = queryRunner.manager.create(Tag, item);
-              const dbItem = await queryRunner.manager.save(insTag);
-              if (dbItem !== undefined && dbItem !== null) {
-                tags.push(dbItem);
-              }
+              tags.push(insTag);
             }
           });
         }
 
-        //Save specifications
-        if (product.specifications) {
-          product.specifications.forEach(async (spec) => {
-            const insSpec = queryRunner.manager.create(Specification, spec);
-            const dbSpec = await queryRunner.manager.save(insSpec);
-            if (dbSpec !== undefined && dbSpec !== null) {
-              specs.push(dbSpec);
-            }
-          });
-        }
+        const dbTags = await queryRunner.manager.save(Tag, tags);
+        console.log(
+          "Current Tags After Save ",
+          JSON.stringify(dbTags, null, 2)
+        );
+
+        nProduct.addAllTag(dbTags);
+        nProduct.addAllMetaData(metaDataList);
 
         if (user !== null) {
           nProduct.user = user;
         }
 
-        nProduct.metaDatas = metaDatas;
-        nProduct.specifications = specs;
-        nProduct.tags = tags;
-        nProduct.images = [];
+        console.log("CUrrent Product ", JSON.stringify(nProduct, null, 2));
+
         const insProduct = queryRunner.manager.create(Product, nProduct);
         saveProduct = await queryRunner.manager.save(insProduct);
         let pId = 0;
         if (saveProduct !== null && saveProduct !== undefined) {
           pId = saveProduct.id !== undefined ? Number(saveProduct.id) : 0;
         }
-
+        let dbProdut: Product | null = null;
         const images: ImageGallery[] = [];
         if (product.images && pId > 0) {
-          const dbProdut = await queryRunner.manager.findOne(Product, {
+          dbProdut = await queryRunner.manager.findOne(Product, {
             where: { id: pId },
           });
           product.images.forEach(async (image) => {
@@ -110,13 +109,30 @@ class ProductService {
           });
         }
 
+        //Save specifications
+        if (product.specifications) {
+          product.specifications.forEach(async (spec) => {
+            if (dbProdut !== undefined && dbProdut !== null) {
+              spec.product = dbProdut;
+              const insSpec = queryRunner.manager.create(Specification, spec);
+              const dbSpec = await queryRunner.manager.save(insSpec);
+              if (dbSpec !== undefined && dbSpec !== null) {
+                specs.push(dbSpec);
+              }
+            }
+          });
+        }
+
         await queryRunner.commitTransaction();
-        saveProduct.images = images;
+        saveProduct.addAllImage(images);
       } catch (error) {
         apiWriteLog.error("Product Save Error ", error);
         await queryRunner.rollbackTransaction();
       } finally {
-        await queryRunner.release();
+        console.log("Query Runner ", queryRunner.isReleased);
+        if (queryRunner.isReleased) {
+          await queryRunner.release();
+        }
       }
     }
     return saveProduct;

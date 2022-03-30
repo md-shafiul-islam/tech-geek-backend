@@ -13,7 +13,6 @@ import { Product } from "./Product";
 
 @Entity("image_gallery")
 export class ImageGallery {
-  
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -29,8 +28,10 @@ export class ImageGallery {
   @Column({ length: 205 })
   location: string;
 
-  @ManyToOne(() => Product, (product: Product) => product.images)
-  @JoinColumn({name:"product"})
+  @ManyToOne(() => Product, (product: Product) => product.images, {
+    nullable: true,
+  })
+  @JoinColumn({ name: "product" })
   product: Product;
 
   @ManyToMany(() => Post)
@@ -38,6 +39,4 @@ export class ImageGallery {
 
   @ManyToMany(() => News)
   news: News;
-
-  
 }

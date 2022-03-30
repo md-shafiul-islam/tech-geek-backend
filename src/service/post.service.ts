@@ -1,7 +1,10 @@
 import { Repository, UpdateResult } from "typeorm";
 import { AppDataSource } from "../database/AppDataSource";
 import { apiWriteLog } from "../logger/writeLog";
+import { ImageGallery } from "../model/ImageGallery";
+import { MetaDeta } from "../model/MetaData";
 import { Post } from "../model/Post";
+import { Tag } from "../model/Tag";
 import { esIsEmpty } from "../utils/esHelper";
 
 class PostService {
@@ -13,18 +16,77 @@ class PostService {
     }
   }
 
-  async save(post: Partial<Post>) {
-    this.initRepository();
+  async save(post: Post) {
+    let resp: Post | null = null;
     if (post) {
-      try {
-        const resp = await this.postRepository?.save(post);
+      const queryRunner = AppDataSource.createQueryRunner();
+      await queryRunner.connect();
 
-        return resp;
+      await queryRunner.startTransaction();
+      try {
+        const metaDetas: MetaDeta[] = [];
+        const tags: Tag[] = [];
+        const images: ImageGallery[] = [];
+
+        const nPost: Post = new Post();
+        Object.assign(nPost, post);
+        nPost.images = [];
+        nPost.tags = [];
+        nPost.metaDatas = [];
+        
+        post.metaDatas &&
+          post.metaDatas.forEach(async (metaData, idx) => {
+            if (metaData.id > 0) {
+              nPost.addMeta(metaData);
+            } else {
+              metaDetas.push(queryRunner.manager.create(MetaDeta, metaData));
+            }
+          });
+
+        const dbMetas = await queryRunner.manager.save(metaDetas);
+        nPost.addAllMetaData(dbMetas);
+
+        post.tags &&
+          post.tags.forEach(async (tag, idx) => {
+            if (tag.id > 0) {
+              nPost.addTag(tag);
+            } else {
+              tags.push(queryRunner.manager.create(Tag, tag));
+            }
+          });
+
+        const dbTags = await queryRunner.manager.save(tags);
+
+        nPost.addAllTag(dbTags);
+
+        post.images &&
+          post.images.forEach(async (image, idx) => {
+            if (image.id > 0) {
+              nPost.addImage(image);
+            } else {
+              images.push(queryRunner.manager.create(ImageGallery, image));
+            }
+          });
+        const dbImages = await queryRunner.manager.save(ImageGallery, images);
+        nPost.addAllImage(dbImages);
+
+        apiWriteLog.info(`Post image Size ${nPost.images.length}`);
+        apiWriteLog.info(`Post Tag Size ${nPost.tags.length}`);
+        apiWriteLog.info(`Post metaDatas Size ${nPost.metaDatas.length}`);
+
+        const initPost = queryRunner.manager.create(Post, nPost);
+        resp = await queryRunner.manager.save(initPost);
+
+        await queryRunner.commitTransaction();
       } catch (error) {
-        apiWriteLog.error("post Save Failed ");
+        queryRunner.rollbackTransaction();
+      } finally {
+        if (queryRunner.isReleased) {
+          await queryRunner.release();
+        }
       }
     }
-    return null;
+    return resp;
   }
 
   async getById(id: number): Promise<Post | null | undefined> {
@@ -49,7 +111,7 @@ class PostService {
     }
   }
 
-  async update(post: Partial<Post>):Promise<UpdateResult | null | undefined> {
+  async update(post: Partial<Post>): Promise<UpdateResult | null | undefined> {
     this.initRepository();
     if (!esIsEmpty(post)) {
       try {

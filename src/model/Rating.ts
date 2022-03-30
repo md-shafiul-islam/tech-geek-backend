@@ -1,5 +1,6 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Generated, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Product } from "./Product";
+import { RatingItem } from "./RatingItem";
 import { User } from "./User";
 
 @Entity("rating")
@@ -8,19 +9,40 @@ export class Rating {
     @PrimaryGeneratedColumn()
     id:number;
 
-    @Column({name:"public_id"})
+    @Column({name:"public_id", unique:true})
+    @Generated("uuid")
     publicId:string;
 
     @ManyToOne(()=>User, (user:User)=>user.id)
     @JoinColumn({name:"author"})
-    author:User
+    author:User;
 
     @ManyToOne(()=>Product, (product:Product)=>product.ratings)
     @JoinColumn({name:"product"})
-    product:Product
+    product:Product;
 
     @ManyToOne(()=>User, (user:User)=>user.id)
     @JoinColumn({name:"approve_user"})
-    approveUser:User
+    approveUser:User;
 
+    @Column({name:"tag_line"})
+    tagLine:string;
+
+    @Column({name:"total_rating"})
+    totalRating:number;
+
+    @Column({name:"rate_max_score"})
+    rateMaxScore:number;
+
+    @Column({name:"rate_min_score"})
+    rateMinScore:number;
+
+    @Column({name:"rate_avr_score"})
+    rateAvrScore:number;
+
+    @Column({name:"rate_items_count"})
+    rateItemsCount:number;
+
+    @OneToMany(()=>RatingItem, (ratingItem:RatingItem)=>ratingItem.rating)
+    ratingItems:RatingItem[];
 };

@@ -24,6 +24,9 @@ export class Product {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({name:"ally_name"})
+  allyName:string;
+
   @Column({
     length: 155,
   })
@@ -61,7 +64,7 @@ export class Product {
   )
   images: ImageGallery[];
 
-  @ManyToMany(() => Tag, (tag: Tag) => tag.products)
+  @ManyToMany(() => Tag, (tag: Tag) => tag.products, { cascade: true })
   @JoinTable({
     name: "product_tag",
     joinColumn: { name: "product", referencedColumnName: "id" },
@@ -69,7 +72,9 @@ export class Product {
   })
   tags: Tag[];
 
-  @ManyToMany(() => MetaDeta, (metadata: MetaDeta) => metadata.products)
+  @ManyToMany(() => MetaDeta, (metadata: MetaDeta) => metadata.products, {
+    cascade: true,
+  })
   @JoinTable({
     name: "product_meta",
     joinColumn: { name: "id", referencedColumnName: "id" },
@@ -89,4 +94,48 @@ export class Product {
 
   @OneToMany(() => Rating, (rating: Rating) => rating.product)
   ratings: Rating[];
+
+  addTag(tag: Tag) {
+    if (!Array.isArray(this.tags)) {
+      this.tags = new Array<Tag>();
+    }
+    this.tags.push(tag);
+  }
+
+  addMetaData(meta: MetaDeta) {
+    if (!Array.isArray(this.metaDatas)) {
+      this.metaDatas = new Array<MetaDeta>();
+    }
+    this.metaDatas.push(meta);
+  }
+
+  addImage(image: ImageGallery) {
+    if (!Array.isArray(this.images)) {
+      this.images = new Array<ImageGallery>();
+    }
+
+    this.images.push(image);
+  }
+
+  addAllTag(tgs: Tag[]) {
+    if (!Array.isArray(this.tags)) {
+      this.tags = new Array<Tag>();
+    }
+    this.tags.push.apply(this.tags, tgs);
+  }
+
+  addAllMetaData(metas: MetaDeta[]) {
+    if (!Array.isArray(this.metaDatas)) {
+      this.metaDatas = new Array<MetaDeta>();
+    }
+    this.metaDatas.push.apply(this.metaDatas, metas);
+  }
+
+  addAllImage(imgs: ImageGallery[]) {
+    if (!Array.isArray(this.images)) {
+      this.images = new Array<ImageGallery>();
+    }
+
+    this.images.push.apply(this.images, imgs);
+  }
 }
