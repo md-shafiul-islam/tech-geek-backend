@@ -2,6 +2,7 @@ import { Repository, UpdateResult } from "typeorm";
 import { AppDataSource } from "../database/AppDataSource";
 import { apiWriteLog } from "../logger/writeLog";
 import { Brand } from "../model/Brand";
+import { Product } from "../model/Product";
 import { Review } from "../model/Review";
 import { esIsEmpty } from "../utils/esHelper";
 
@@ -79,6 +80,36 @@ class ReviewService {
       return reviews;
     } catch (err) {
       apiWriteLog.error("Error All review ", err);
+      return null;
+    }
+  }
+
+  async getAllReviewsByProduct(id: number) {
+    if (id > 0) {
+      try {
+        const reviews = await this.reviewRepository?.find({
+          where: { product: { id: id } },
+        });
+        return reviews;
+      } catch (err) {
+        apiWriteLog.error("Error All review ", err);
+        return null;
+      }
+    }
+    return null;
+  }
+
+  async getAddReviewsByProduct(product:Product, content:string){
+    this.initRepository();
+    try {
+      const review = new Review();
+      review.product = product;
+      review.content = content;
+      // review.author get session -> user
+      const saveReview = await this.reviewRepository?.save(review);
+      return saveReview;
+    } catch (err) {
+      apiWriteLog.error("Save product review Error ", err);
       return null;
     }
   }

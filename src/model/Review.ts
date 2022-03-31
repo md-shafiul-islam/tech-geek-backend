@@ -1,31 +1,38 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from "typeorm";
 import { Product } from "./Product";
 import { User } from "./User";
 
 @Entity("review")
 export class Review {
-    
-    @PrimaryGeneratedColumn()
-    id:number
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @ManyToOne(()=>User, (user:User)=>user.id)
-    @JoinColumn({name:"author"})
-    author:User
+  @ManyToOne(() => User, (user: User) => user.id)
+  @JoinColumn({ name: "author" })
+  author: User;
 
-    @ManyToOne(()=>Product, (product:Product)=>product.reviews)
-    @JoinColumn({name:"product"})
-    product:Product
+  @ManyToOne(() => Product, (product: Product) => product.reviews)
+  @JoinColumn({ name: "product" })
+  product: Product;
 
-    @ManyToOne(()=>User, (user:User)=>user.id)
-    @JoinColumn({name:"approve_user"})
-    approveUser:User
+  @ManyToOne(() => User, (user: User) => user.id, { nullable: true })
+  @JoinColumn({ name: "approve_user" })
+  approveUser: User;
 
-    @Column("text")
-    content:string
+  @Column("text")
+  content: string;
 
-    @CreateDateColumn({name:"created_date"})
-    createdDate:Date;
+  @CreateDateColumn({ name: "created_date" })
+  createdDate: Date;
 
-    @Column({name:"update_date"})
-    updateDate:Date;
-};
+  @UpdateDateColumn({ name: "update_date" })
+  updateDate: Date;
+}

@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  Generated,
   JoinColumn,
   JoinTable,
   ManyToMany,
@@ -23,6 +24,10 @@ import { User } from "./User";
 export class Product {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column({name:"public_id", unique:true})
+  @Generated("uuid")
+  publicId:string;
 
   @Column({name:"ally_name"})
   allyName:string;

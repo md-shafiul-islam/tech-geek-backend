@@ -41,6 +41,7 @@ export default (app: Application) => {
   app.use(specificationUrl, specificationRoute);
   app.use(metaUrl, metaRoute);
   app.use(tagUrl, tagRoute);
+  
 
   app.get("/", (req: Request, resp: Response) => {
     resp.sendStatus(200);

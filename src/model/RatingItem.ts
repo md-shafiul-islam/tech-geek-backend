@@ -23,7 +23,7 @@ export class RatingItem {
     @Column({name:"min_value"})
     minValue:number;
 
-    @Column({name:"max_value"})
+    @Column({name:"input_value"})
     inValue:number;
 
     @Column({name:"description"})

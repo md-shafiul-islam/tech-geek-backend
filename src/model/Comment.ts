@@ -28,10 +28,12 @@ export class Comment {
   @Column({ name: "content", type: "text" })
   content: string;
 
-  @Column({ name: "author" })
+  @ManyToOne(() => User, (user: User) => user.id)
+  @JoinColumn({ name: "author", referencedColumnName: "id" })
   author: User;
 
-  @Column({ name: "approve_user" })
+  @ManyToOne(() => User, (user: User) => user.id)
+  @JoinColumn({ name: "approve_user", referencedColumnName: "id" })
   approveUser: User;
 
   @ManyToOne(() => Product, (product: Product) => product.id)

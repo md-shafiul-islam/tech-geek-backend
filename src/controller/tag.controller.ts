@@ -105,6 +105,8 @@ class TagController {
       resp.send(respFormat(null, "tag delete failed", false));
     }
   }
+
+  
 }
 
 export const tagController = new TagController();

@@ -1,6 +1,7 @@
 import { EntityManager, Repository, UpdateResult } from "typeorm";
 import { AppDataSource } from "../database/AppDataSource";
 import { apiWriteLog } from "../logger/writeLog";
+import { Comment } from "../model/Comment";
 import { ImageGallery } from "../model/ImageGallery";
 import { MetaDeta } from "../model/MetaData";
 import { Post } from "../model/Post";
@@ -17,6 +18,25 @@ class ProductService {
     if (this.productRepository === null) {
       this.productRepository = AppDataSource.getRepository(Product);
     }
+  }
+
+  async addComment(comment: Comment) {
+    try {
+      const initComment = AppDataSource.manager.create(Comment, comment);
+      const dbComment = await AppDataSource.manager.save(initComment);
+      return dbComment;
+    } catch (error) {
+      apiWriteLog.error("Add comment ProductServices Error ", error);
+      return null;
+    }
+  }
+
+  async getProductByAllyName(allyName: string) {
+    this.initRepository();
+    const product = await this.productRepository?.findOne({
+      where: { allyName },
+    });
+    return product;
   }
 
   async save(product: Partial<Product>) {
