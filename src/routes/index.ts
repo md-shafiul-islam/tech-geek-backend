@@ -1,6 +1,7 @@
 import { Application, Express, Request, Response } from "express";
 import { brandRoute } from "./brand.route";
 import { categoryRoute } from "./category.route";
+import { initialsRoute } from "./initials.route";
 import { metaRoute } from "./metadata.route";
 import { newsRoute } from "./news.route";
 import { postRoute } from "./post.route";
@@ -10,7 +11,6 @@ import { reviewRoute } from "./review.route";
 import { specKeyRoute } from "./spec.key.route";
 import { specTypeRoute } from "./spec.type.route";
 import { specificationRoute } from "./specification.route";
-import { tagRoute } from "./tag.route";
 import { userRoute } from "./user.route";
 
 const userUrl = `/api/users`;
@@ -26,6 +26,7 @@ const newsUrl = `/api/news`;
 const specificationUrl = "/api/specifications";
 const metaUrl = "/api/meta-datas";
 const tagUrl = "/api/tags";
+const intialsUrl = "/api/intials";
 
 export default (app: Application) => {
   app.use(userUrl, userRoute);
@@ -40,7 +41,7 @@ export default (app: Application) => {
   app.use(newsUrl, newsRoute);
   app.use(specificationUrl, specificationRoute);
   app.use(metaUrl, metaRoute);
-  app.use(tagUrl, tagRoute);
+  app.use(intialsUrl, initialsRoute)
   
 
   app.get("/", (req: Request, resp: Response) => {

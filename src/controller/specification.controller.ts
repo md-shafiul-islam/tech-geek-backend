@@ -46,7 +46,6 @@ class SpecificationController {
 
     try {
       const specification = await specificationService.save({
-        specType,
         key,
         value,
         description,
@@ -72,7 +71,6 @@ class SpecificationController {
 
       const specification: Partial<Specification> = {
         id: intId,
-        specType,
         key,
         value,
         description,

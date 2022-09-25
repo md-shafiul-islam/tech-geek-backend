@@ -26,6 +26,6 @@ export class RatingItem {
     @Column({name:"input_value"})
     inValue:number;
 
-    @Column({name:"description"})
+    @Column({name:"description", nullable:true})
     description:string;
 }

@@ -4,11 +4,9 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Product } from "./Product";
-import { SpecificationType } from "./SpecificationType";
 import { SpecKey } from "./SpecKey";
 
 @Entity({ name: "specification" })
@@ -16,18 +14,14 @@ export class Specification {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => SpecificationType, (spcType: SpecificationType) => spcType.id)
-  @JoinColumn({name:"spec_type"})
-  specType: SpecificationType;
-
   @ManyToOne(() => SpecKey, (specKey: SpecKey) => specKey.id)
-  @JoinColumn({ name: "spec_key" })
+  @JoinColumn({ name: "spc_key" })
   key: SpecKey;
 
-  @Column()
+  @Column({name:"value", type:"mediumtext"})
   value: string;
 
-  @Column()
+  @Column({name:"description", type:"mediumtext"})
   description: string;
 
   @ManyToOne(() => Product, (product: Product) => product.specifications)

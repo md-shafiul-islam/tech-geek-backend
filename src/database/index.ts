@@ -9,7 +9,7 @@ export const dbConnectionOption = ():DataSourceOptions => {
     username: "tech_geek_shafiul",
     password: "01933408421S",
     database: "tech_geek",
-    logging: true,
+    logging: false,
     synchronize: true,
     entities: [__dirname + "/../model/*{.js,.ts}"],
   };

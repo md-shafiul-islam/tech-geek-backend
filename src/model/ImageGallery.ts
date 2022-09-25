@@ -28,11 +28,8 @@ export class ImageGallery {
   @Column({ length: 205 })
   location: string;
 
-  @ManyToOne(() => Product, (product: Product) => product.images, {
-    nullable: true,
-  })
-  @JoinColumn({ name: "product" })
-  product: Product;
+  @ManyToMany(()=>Product)
+  products: Product[];
 
   @ManyToMany(() => Post)
   posts: Post[];

@@ -1,23 +1,24 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   Generated,
   JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
-  MaxKey,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from "typeorm";
 import { Brand } from "./Brand";
 import { Category } from "./Category";
 import { ImageGallery } from "./ImageGallery";
 import { MetaDeta } from "./MetaData";
+import { ProductPrice } from "./ProductPrice";
 import { Rating } from "./Rating";
 import { Review } from "./Review";
 import { Specification } from "./Specification";
-import { Tag } from "./Tag";
 import { User } from "./User";
 
 @Entity({ name: "product" })
@@ -25,15 +26,15 @@ export class Product {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({name:"public_id", unique:true})
+  @Column({ name: "public_id", unique: true, length:75 })
   @Generated("uuid")
-  publicId:string;
+  publicId: string;
 
-  @Column({name:"ally_name"})
-  allyName:string;
+  @Column({ name: "alias_name" })
+  aliasName: string;
 
   @Column({
-    length: 155,
+    length: 175,
   })
   title: string;
 
@@ -43,16 +44,31 @@ export class Product {
   @Column({ type: "double" })
   quantity: number;
 
-  @Column("double")
-  price: number;
+  @Column({length:100})
+  ram:string;
 
-  @Column({ type: "double", name: "discount_price" })
-  discountPrice: number;
+  @Column({name:"image_url", length:205})
+  imageUrl:string;
+
+  @OneToMany(
+    () => ProductPrice,
+    (productPrice: ProductPrice) => productPrice.product
+  )
+  prices: ProductPrice[];
+
+  @Column({default:0})
+  price:number;
+
+	@Column({name:"discount_price", default:0})
+	discountPrice:number;
 
   @Column({ name: "discount_status" })
   discountStatus: boolean;
 
-  @Column("text")
+  @Column({name:"is_upcoming"})
+  isUpcoming:boolean;
+
+  @Column({ type: "longtext", default:null, nullable:true })
   description: string;
 
   @ManyToOne(() => User, (user: User) => user.id)
@@ -63,33 +79,28 @@ export class Product {
   @JoinColumn({ name: "category" })
   category: Category;
 
-  @OneToMany(
-    () => ImageGallery,
-    (imageGallery: ImageGallery) => imageGallery.product
-  )
-  images: ImageGallery[];
-
-  @ManyToMany(() => Tag, (tag: Tag) => tag.products, { cascade: true })
-  @JoinTable({
-    name: "product_tag",
-    joinColumn: { name: "product", referencedColumnName: "id" },
-    inverseJoinColumn: { name: "tag", referencedColumnName: "id" },
+  @ManyToMany(() => ImageGallery, (image: ImageGallery) => image.products, {
+    cascade: true,
   })
-  tags: Tag[];
+  @JoinTable({
+    name: "product_images",
+    joinColumn: { name: "product", referencedColumnName: "id" },
+    inverseJoinColumn: { name: "image", referencedColumnName: "id" },
+  })
+  images: ImageGallery[];
 
   @ManyToMany(() => MetaDeta, (metadata: MetaDeta) => metadata.products, {
     cascade: true,
   })
   @JoinTable({
     name: "product_meta",
-    joinColumn: { name: "id", referencedColumnName: "id" },
+    joinColumn: { name: "product", referencedColumnName: "id" },
     inverseJoinColumn: { name: "meta", referencedColumnName: "id" },
   })
   metaDatas: MetaDeta[];
 
-  @ManyToOne(() => Brand, (brand: Brand) => brand.products)
-  @JoinColumn({ name: "brand" })
-  brand: Brand;
+  @Column({ name: "brand" })
+  brand: string;
 
   @OneToMany(() => Specification, (spec: Specification) => spec.product)
   specifications: Specification[];
@@ -100,18 +111,24 @@ export class Product {
   @OneToMany(() => Rating, (rating: Rating) => rating.product)
   ratings: Rating[];
 
-  addTag(tag: Tag) {
-    if (!Array.isArray(this.tags)) {
-      this.tags = new Array<Tag>();
-    }
-    this.tags.push(tag);
-  }
+  @CreateDateColumn({name:"create_date"})
+  createDate:Date;
+
+  @UpdateDateColumn({name:"update_date"})
+  updateDate:Date;
 
   addMetaData(meta: MetaDeta) {
     if (!Array.isArray(this.metaDatas)) {
       this.metaDatas = new Array<MetaDeta>();
     }
     this.metaDatas.push(meta);
+  }
+
+  addAllMetaData(metas: MetaDeta[]) {
+    if (!Array.isArray(this.metaDatas)) {
+      this.metaDatas = new Array<MetaDeta>();
+    }
+    this.metaDatas.push.apply(this.metaDatas, metas);
   }
 
   addImage(image: ImageGallery) {
@@ -122,18 +139,20 @@ export class Product {
     this.images.push(image);
   }
 
-  addAllTag(tgs: Tag[]) {
-    if (!Array.isArray(this.tags)) {
-      this.tags = new Array<Tag>();
+  addAllSpecification(specs: Specification[]) {
+    if (!Array.isArray(this.specifications)) {
+      this.specifications = new Array<Specification>();
     }
-    this.tags.push.apply(this.tags, tgs);
+
+    this.specifications.push.apply(this.specifications, specs);
   }
 
-  addAllMetaData(metas: MetaDeta[]) {
-    if (!Array.isArray(this.metaDatas)) {
-      this.metaDatas = new Array<MetaDeta>();
+  addSpecification(spec: Specification) {
+    if (!Array.isArray(this.specifications)) {
+      this.specifications = new Array<Specification>();
     }
-    this.metaDatas.push.apply(this.metaDatas, metas);
+
+    this.specifications.push(spec);
   }
 
   addAllImage(imgs: ImageGallery[]) {

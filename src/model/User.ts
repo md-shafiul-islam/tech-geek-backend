@@ -17,7 +17,7 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({name:"public_id", unique:true})
+  @Column({name:"public_id", unique:true, length:75})
   @Generated("uuid")
   publicId:string;
 

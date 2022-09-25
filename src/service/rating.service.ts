@@ -7,10 +7,15 @@ import { esIsEmpty } from "../utils/esHelper";
 
 class RatingService {
   private ratingRepository: Repository<Rating> | null = null;
+  private ratingItemRepository: Repository<RatingItem> | null = null;
 
   private initRepository(): void {
     if (this.ratingRepository === null) {
       this.ratingRepository = AppDataSource.getRepository(Rating);
+    }
+
+    if (this.ratingItemRepository === null) {
+      this.ratingItemRepository = AppDataSource.getRepository(RatingItem);
     }
   }
 
@@ -18,7 +23,6 @@ class RatingService {
     this.initRepository();
     if (rating) {
       try {
-        
         const resp = await this.ratingRepository?.save(rating);
 
         return resp;
@@ -121,13 +125,27 @@ class RatingService {
 
   async getByProductId(id: number): Promise<Rating | null | undefined> {
     this.initRepository();
+    let rating:Rating | undefined | null = null;
     try {
-      const rating = await this.ratingRepository?.findOne({ where: { product:{id} } });
-      return rating;
+      rating = await this.ratingRepository?.findOne({
+        where: { product: { id } },
+        relations: [],
+      });
+      if(rating !== null && rating !== undefined){
+        let ratingItems = await this.ratingItemRepository?.find({
+          where: { rating: { id: rating?.id } },
+        });
+        if(ratingItems !== null && ratingItems !== undefined){
+          rating.ratingItems = ratingItems;
+        }
+        
+      }
+      
     } catch (err) {
       apiWriteLog.error("Error getRating By product ID ", err);
-      return null;
+      
     }
+    return rating;
   }
 }
 

@@ -4,7 +4,6 @@ import { apiWriteLog } from "../logger/writeLog";
 import { ImageGallery } from "../model/ImageGallery";
 import { MetaDeta } from "../model/MetaData";
 import { News } from "../model/news";
-import { Tag } from "../model/Tag";
 import { esIsEmpty } from "../utils/esHelper";
 
 class NewsService {
@@ -26,7 +25,6 @@ class NewsService {
       Object.assign(nNews, nNews);
       nNews.images = [];
       nNews.metaDatas = [];
-      nNews.tags = [];
       
       const queryRunner =  AppDataSource.createQueryRunner();
       await queryRunner.connect();
@@ -35,7 +33,6 @@ class NewsService {
         
         const images:ImageGallery[] = [];
         const metadatas:MetaDeta[] = [];
-        const tags:Tag[] = [];
 
         news.images&&news.images.map((image)=>{
           if(image.id > 0){
@@ -58,18 +55,7 @@ class NewsService {
 
         const dbMetas = await queryRunner.manager.save(metadatas);
         nNews.addAllMeta(dbMetas);
-
-        news.tags&&news.tags.map((tag)=>{
-          if(tag.id > 0){
-            nNews.addTag(tag);
-          }else{
-            tags.push(queryRunner.manager.create(Tag, tag));
-          }
-        })
-
-        const dbTags = await queryRunner.manager.save(tags);
-        nNews.addAllTag(dbTags);
-
+       
         saveNews = await queryRunner.manager.save(nNews);
 
         await queryRunner.commitTransaction();

@@ -14,7 +14,6 @@ import { Brand } from "./Brand";
 import { Category } from "./Category";
 import { MetaDeta } from "./MetaData";
 import { ImageGallery } from "./ImageGallery";
-import { Tag } from "./Tag";
 import { User } from "./User";
 
 @Entity({ name: "post" })
@@ -22,12 +21,12 @@ export class Post {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: "public_id", unique: true })
+  @Column({ name: "public_id", unique: true, length:60 })
   @Generated("uuid")
   publicId: string;
 
-  @Column({ name: "ally_name", unique: true })
-  allyName: string;
+  @Column({ name: "alias_name", unique: true })
+  aliasName: string;
 
   @Column({ length: 150 })
   title: string;
@@ -50,14 +49,6 @@ export class Post {
   @ManyToOne(() => User, (user: User) => user.id)
   @JoinColumn({ name: "author" })
   author: User;
-
-  @ManyToMany(() => Tag, (tag: Tag) => tag.posts)
-  @JoinTable({
-    name: "posts_tags",
-    joinColumn: { name: "post", referencedColumnName: "id" },
-    inverseJoinColumn: { name: "tag", referencedColumnName: "id" },
-  })
-  tags: Tag[];
 
   @ManyToMany(() => MetaDeta, (meta: MetaDeta) => meta.posts)
   @JoinTable({
@@ -93,20 +84,6 @@ export class Post {
       this.images = new Array<ImageGallery>();
     }
     this.images.push(image);
-  }
-
-  addAllTag(tgs: Tag[]) {
-    if (!Array.isArray(this.tags)) {
-      this.tags = new Array<Tag>();
-    }
-    this.tags.push.apply(this.tags, tgs);
-  }
-
-  addTag(tag: Tag) {
-    if (!Array.isArray(this.tags)) {
-      this.tags = new Array<Tag>();
-    }
-    this.tags.push(tag);
   }
 
   addAllMetaData(metas: MetaDeta[]) {
