@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Product } from "./Product";
@@ -52,4 +53,8 @@ export class Rating {
 
   @OneToMany(() => RatingItem, (ratingItem: RatingItem) => ratingItem.rating)
   ratingItems: RatingItem[];
+
+  @OneToOne(()=>Product, (product:Product)=>product.avgRating)
+  @JoinColumn({name:"avg_product_rate"})
+  avgRatProduct:Product;
 }

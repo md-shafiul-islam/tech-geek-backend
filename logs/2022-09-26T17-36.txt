@@ -1,0 +1,18 @@
+Error getproductByID , >> OBJ >> {
+  "query": "SELECT `Product`.`id` AS `Product_id`, `Product`.`public_id` AS `Product_public_id`, `Product`.`alias_name` AS `Product_alias_name`, `Product`.`title` AS `Product_title`, `Product`.`model` AS `Product_model`, `Product`.`quantity` AS `Product_quantity`, `Product`.`ram` AS `Product_ram`, `Product`.`image_url` AS `Product_image_url`, `Product`.`price` AS `Product_price`, `Product`.`discount_price` AS `Product_discount_price`, `Product`.`discount_status` AS `Product_discount_status`, `Product`.`is_upcoming` AS `Product_is_upcoming`, `Product`.`description` AS `Product_description`, `Product`.`brand` AS `Product_brand`, `Product`.`create_date` AS `Product_create_date`, `Product`.`update_date` AS `Product_update_date`, `Product`.`user` AS `Product_user`, `Product`.`category` AS `Product_category` FROM `product` `Product` WHERE (`Product`.`id` = ?) LIMIT 1",
+  "parameters": [
+    null
+  ],
+  "driverError": {
+    "code": "ER_BAD_FIELD_ERROR",
+    "errno": 1054,
+    "sqlState": "42S22",
+    "sqlMessage": "Unknown column 'NaN' in 'where clause'",
+    "sql": "SELECT `Product`.`id` AS `Product_id`, `Product`.`public_id` AS `Product_public_id`, `Product`.`alias_name` AS `Product_alias_name`, `Product`.`title` AS `Product_title`, `Product`.`model` AS `Product_model`, `Product`.`quantity` AS `Product_quantity`, `Product`.`ram` AS `Product_ram`, `Product`.`image_url` AS `Product_image_url`, `Product`.`price` AS `Product_price`, `Product`.`discount_price` AS `Product_discount_price`, `Product`.`discount_status` AS `Product_discount_status`, `Product`.`is_upcoming` AS `Product_is_upcoming`, `Product`.`description` AS `Product_description`, `Product`.`brand` AS `Product_brand`, `Product`.`create_date` AS `Product_create_date`, `Product`.`update_date` AS `Product_update_date`, `Product`.`user` AS `Product_user`, `Product`.`category` AS `Product_category` FROM `product` `Product` WHERE (`Product`.`id` = NaN) LIMIT 1"
+  },
+  "code": "ER_BAD_FIELD_ERROR",
+  "errno": 1054,
+  "sqlState": "42S22",
+  "sqlMessage": "Unknown column 'NaN' in 'where clause'",
+  "sql": "SELECT `Product`.`id` AS `Product_id`, `Product`.`public_id` AS `Product_public_id`, `Product`.`alias_name` AS `Product_alias_name`, `Product`.`title` AS `Product_title`, `Product`.`model` AS `Product_model`, `Product`.`quantity` AS `Product_quantity`, `Product`.`ram` AS `Product_ram`, `Product`.`image_url` AS `Product_image_url`, `Product`.`price` AS `Product_price`, `Product`.`discount_price` AS `Product_discount_price`, `Product`.`discount_status` AS `Product_discount_status`, `Product`.`is_upcoming` AS `Product_is_upcoming`, `Product`.`description` AS `Product_description`, `Product`.`brand` AS `Product_brand`, `Product`.`create_date` AS `Product_create_date`, `Product`.`update_date` AS `Product_update_date`, `Product`.`user` AS `Product_user`, `Product`.`category` AS `Product_category` FROM `product` `Product` WHERE (`Product`.`id` = NaN) LIMIT 1"
+}

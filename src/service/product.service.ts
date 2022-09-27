@@ -1,3 +1,4 @@
+import { orderBy } from "lodash";
 import { ParsedQs } from "qs";
 import { EntityManager, Repository, UpdateResult } from "typeorm";
 import { AppDataSource } from "../database/AppDataSource";
@@ -12,6 +13,7 @@ import { Specification } from "../model/Specification";
 import { TrackProductVisit } from "../model/TrackProductVisit";
 import { User } from "../model/User";
 import { esGetNumber, esIsEmpty } from "../utils/esHelper";
+import { categoryService } from "./category.service";
 
 class ProductService {
   private productRepository: Repository<Product> | null = null;
@@ -100,6 +102,9 @@ class ProductService {
         .leftJoinAndSelect("product.specifications", "specifications")
         .leftJoinAndSelect("specifications.key", "key")
         .leftJoinAndSelect("product.metaDatas", "metaDatas")
+        .leftJoinAndSelect("product.avgRating", "avgRating")
+        .leftJoinAndSelect("avgRating.ratingItems", "ratingItems")
+        .leftJoinAndSelect("ratingItems.rateKey", "rateKey")
         .getOne();
 
       return product;
@@ -119,7 +124,7 @@ class ProductService {
         "product"
       )
         .where("product.price BETWEEN :sPrice AND :bPrice", { sPrice, bPrice })
-        .orderBy("RAND()")
+        .orderBy("product.createDate", "DESC")
         .limit(6)
         .getMany();
       return products;
@@ -256,24 +261,55 @@ class ProductService {
 
   async getAll(query: any): Promise<any> {
     try {
-      const { start, end, count } = query;
-      console.log("Query Start ", start, " end ", end, " Count Status ", count);
+      const { start, end, count, cat } = query;
+
       let offset = esGetNumber(start);
       let limit = esGetNumber(end);
       let products = null,
         productCount = 0;
-      console.log("After Convert ", offset, " Limit ", limit);
-      if (limit > 0) {
-        products = await AppDataSource.createQueryBuilder(Product, "product")
-          .leftJoinAndSelect("product.prices", "prices")
-          .orderBy("product.createDate", "DESC")
-          .skip(offset)
-          .take(limit)
-          .getMany();
+
+      const categories = await categoryService.getAllCategoryAsStringArray();
+      if (!esIsEmpty(cat)) {
+        if (Array.isArray(categories)) {
+          if (categories.includes(cat)) {
+            if (limit > 0) {
+              products = await AppDataSource.createQueryBuilder(
+                Product,
+                "product"
+              )
+                .leftJoinAndSelect("product.prices", "prices")
+                .leftJoinAndSelect("product.category", "category")
+                .where("category.key = :key", { key: cat })
+                .orderBy("product.createDate", "DESC")
+                .skip(offset)
+                .take(limit)
+                .getMany();
+            } else {
+              products = await AppDataSource.createQueryBuilder(
+                Product,
+                "product"
+              )
+                .leftJoinAndSelect("product.prices", "prices")
+                .leftJoinAndSelect("product.category", "category")
+                .where("category.key = :key", { key: cat })
+                .orderBy("product.createDate", "DESC")
+                .getMany();
+            }
+          }
+        }
       } else {
-        products = await AppDataSource.createQueryBuilder(Product, "product")
-          .orderBy("product.createDate", "DESC")
-          .getMany();
+        if (limit > 0) {
+          products = await AppDataSource.createQueryBuilder(Product, "product")
+            .leftJoinAndSelect("product.prices", "prices")
+            .orderBy("product.createDate", "DESC")
+            .skip(offset)
+            .take(limit)
+            .getMany();
+        } else {
+          products = await AppDataSource.createQueryBuilder(Product, "product")
+            .orderBy("product.createDate", "DESC")
+            .getMany();
+        }
       }
 
       if (count === "yes") {

@@ -8,6 +8,7 @@ import {
   ManyToMany,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -26,7 +27,7 @@ export class Product {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: "public_id", unique: true, length:75 })
+  @Column({ name: "public_id", unique: true, length: 75 })
   @Generated("uuid")
   publicId: string;
 
@@ -44,11 +45,11 @@ export class Product {
   @Column({ type: "double" })
   quantity: number;
 
-  @Column({length:100})
-  ram:string;
+  @Column({ length: 100 })
+  ram: string;
 
-  @Column({name:"image_url", length:205})
-  imageUrl:string;
+  @Column({ name: "image_url", length: 205 })
+  imageUrl: string;
 
   @OneToMany(
     () => ProductPrice,
@@ -56,19 +57,19 @@ export class Product {
   )
   prices: ProductPrice[];
 
-  @Column({default:0})
-  price:number;
+  @Column({ default: 0 })
+  price: number;
 
-	@Column({name:"discount_price", default:0})
-	discountPrice:number;
+  @Column({ name: "discount_price", default: 0 })
+  discountPrice: number;
 
   @Column({ name: "discount_status" })
   discountStatus: boolean;
 
-  @Column({name:"is_upcoming"})
-  isUpcoming:boolean;
+  @Column({ name: "is_upcoming" })
+  isUpcoming: boolean;
 
-  @Column({ type: "longtext", default:null, nullable:true })
+  @Column({ type: "longtext", default: null, nullable: true })
   description: string;
 
   @ManyToOne(() => User, (user: User) => user.id)
@@ -111,11 +112,14 @@ export class Product {
   @OneToMany(() => Rating, (rating: Rating) => rating.product)
   ratings: Rating[];
 
-  @CreateDateColumn({name:"create_date"})
-  createDate:Date;
+  @OneToOne(() => Rating, (rating: Rating) => rating.avgRatProduct)
+  avgRating: Rating;
 
-  @UpdateDateColumn({name:"update_date"})
-  updateDate:Date;
+  @CreateDateColumn({ name: "create_date" })
+  createDate: Date;
+
+  @UpdateDateColumn({ name: "update_date" })
+  updateDate: Date;
 
   addMetaData(meta: MetaDeta) {
     if (!Array.isArray(this.metaDatas)) {

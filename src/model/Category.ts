@@ -23,13 +23,16 @@ export class Category {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({length:50})
   name: string;
 
   @Column({
     type: "text",
   })
   description: string;
+
+  @Column({length:60})
+  key: string;
 
   @TreeChildren()
   children: Category[];

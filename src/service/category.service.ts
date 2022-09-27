@@ -1,3 +1,4 @@
+import e from "express";
 import { Repository, TreeRepository, UpdateResult } from "typeorm";
 import { AppDataSource } from "../database/AppDataSource";
 import { apiWriteLog } from "../logger/writeLog";
@@ -46,6 +47,23 @@ class CategoryService {
     }
   }
 
+  async getAllCategoryAsStringArray() {
+    this.initRepository();
+    try {
+      const categories = await this.categoryRepository?.find();
+      const catStr:string[] = [];
+      if (categories) {
+        categories.forEach((item:Category) => {
+          catStr.push(item.key);
+        });
+      }
+      return catStr;
+    } catch (error) {
+      console.log("Categories String not found ", error);
+      return null;
+    }
+  }
+
   async getCategoryTree() {
     this.initRepository();
     try {
@@ -68,8 +86,12 @@ class CategoryService {
     }
   }
 
-  async updateCategory(name:string, description:string, id:number, parent:Category) {
-
+  async updateCategory(
+    name: string,
+    description: string,
+    id: number,
+    parent: Category
+  ) {
     this.initRepository();
     try {
       const dbCategory = await this.categoryRepository?.findOneBy({ id });
@@ -85,7 +107,7 @@ class CategoryService {
           dbCategory.name = name;
         }
 
-        if(!esIsEmpty(parent)){
+        if (!esIsEmpty(parent)) {
           dbCategory.parent = parent;
         }
 
