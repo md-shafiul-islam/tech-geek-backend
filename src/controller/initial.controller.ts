@@ -74,6 +74,7 @@ class InitialController {
     }
   }
 
+  
   async saveAllProduct(req: Request, resp: Response) {
     try {
       console.log("Save All Product Run ........");

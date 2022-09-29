@@ -1,6 +1,6 @@
 import { orderBy } from "lodash";
 import { ParsedQs } from "qs";
-import { EntityManager, Repository, UpdateResult } from "typeorm";
+import { Brackets, EntityManager, Repository, UpdateResult } from "typeorm";
 import { AppDataSource } from "../database/AppDataSource";
 import { apiWriteLog } from "../logger/writeLog";
 import { Comment } from "../model/Comment";
@@ -50,9 +50,36 @@ class ProductService {
     }
   }
 
+  async getProductByPriceRange(cat: any, minPrice: number, maxPrice: number) {
+    try {
+      const products = await AppDataSource.createQueryBuilder(
+        Product,
+        "product"
+      )
+        .leftJoinAndSelect("product.prices", "prices")
+        .leftJoinAndSelect("product.category", "category")
+        .where("category.key = :cat", { cat })
+        .andWhere(
+          new Brackets((qb) => {
+            qb.where("product.price BETWEEN :minPrice AND :maxPrice", {
+              minPrice,
+              maxPrice,
+            });
+          })
+        )
+        .orderBy("product.createDate", "DESC")
+        .take(500)
+        .getMany();
+
+      return products;
+    } catch (error) {
+      apiWriteLog.error("Product By Range Error ", error);
+      return null;
+    }
+  }
+
   async getMostVisitedProducts(limit: number) {
     try {
-      console.log("Get By MostVisitedProducts ");
       const visitedItems = await AppDataSource.createQueryBuilder(
         TrackProductVisit,
         "productVisit"
@@ -77,9 +104,11 @@ class ProductService {
     return null;
   }
 
-  async getNewArrivalProducts() {
+  async getNewArrivalProducts(cat: string) {
     try {
       const product = await AppDataSource.createQueryBuilder(Product, "product")
+        .leftJoinAndSelect("product.category", "category")
+        .where("category.key = :cat", { cat })
         .orderBy("product.createDate", "DESC")
         .limit(8)
         .getMany();
@@ -97,6 +126,7 @@ class ProductService {
 
       const product = await AppDataSource.createQueryBuilder(Product, "product")
         .where({ aliasName: query })
+        .leftJoinAndSelect("product.category", "category")
         .leftJoinAndSelect("product.images", "images")
         .leftJoinAndSelect("product.prices", "prices")
         .leftJoinAndSelect("product.specifications", "specifications")
@@ -116,14 +146,24 @@ class ProductService {
 
   async getRecommendedProducts(product: Product) {
     try {
-      let bPrice = product.price + 5000,
-        sPrice = product.price - 5000;
-      sPrice = sPrice > 0 ? sPrice : 0;
+      let maxPrice = product.price + 5000,
+        minPrice = product.price - 5000;
+      minPrice = minPrice > 0 ? minPrice : 0;
       const products = await AppDataSource.createQueryBuilder(
         Product,
         "product"
       )
-        .where("product.price BETWEEN :sPrice AND :bPrice", { sPrice, bPrice })
+
+        .leftJoinAndSelect("product.category", "category")
+        .where("category.key = :cat", { cat: product?.category?.key })
+        .andWhere(
+          new Brackets((qb) => {
+            qb.where("product.price BETWEEN :minPrice AND :maxPrice", {
+              minPrice,
+              maxPrice,
+            });
+          })
+        )
         .orderBy("product.createDate", "DESC")
         .limit(6)
         .getMany();
@@ -165,6 +205,7 @@ class ProductService {
       try {
         let specs: Specification[] = [];
         const metaDatas: MetaDeta[] = [];
+        const images: ImageGallery[] = [];
 
         let user = await queryRunner.manager.findOne(User, {
           where: { id: 1 },
@@ -194,6 +235,18 @@ class ProductService {
           nProduct.user = user;
         }
 
+        if (product.images) {
+          product.images.forEach((image) => {
+            if (image.id > 0) {
+              nProduct.addImage(image);
+            } else {
+              const insImage = queryRunner.manager.create(ImageGallery, image);
+              images.push(insImage);
+            }
+          });
+
+          await queryRunner.manager.save(ImageGallery, images);
+        }
         const insProduct = queryRunner.manager.create(Product, nProduct);
         saveProduct = await queryRunner.manager.save(insProduct);
         let pId = 0;
@@ -201,23 +254,14 @@ class ProductService {
           pId = saveProduct.id !== undefined ? Number(saveProduct.id) : 0;
         }
         let dbProdut: Product | null = null;
-        const images: ImageGallery[] = [];
-        // if (product.images && pId > 0) {
-        //   dbProdut = await queryRunner.manager.findOne(Product, {
-        //     where: { id: pId },
-        //   });
-        //   product.images.forEach(async (image) => {
-        //     if (dbProdut !== null) {
-        //       image.product = dbProdut;
 
-        //       const insImage = queryRunner.manager.create(ImageGallery, image);
-        //       const dbImage = await queryRunner.manager.save(insImage);
-        //       images.push(dbImage);
-        //     }
-        //   });
-        // }
+        if (product.images && pId > 0) {
+          dbProdut = await queryRunner.manager.findOne(Product, {
+            where: { id: pId },
+          });
+        }
 
-        //Save specifications
+        // Save specifications
         if (product.specifications) {
           product.specifications.forEach(async (spec) => {
             if (dbProdut !== undefined && dbProdut !== null) {
@@ -313,12 +357,23 @@ class ProductService {
       }
 
       if (count === "yes") {
-        productCount = await AppDataSource.createQueryBuilder(
-          Product,
-          "product"
-        ).getCount();
+        if (!esIsEmpty(cat)) {
+          productCount = await AppDataSource.createQueryBuilder(
+            Product,
+            "product"
+          )
+            .innerJoin("product.category", "category")
+            .where("category.key = :cat", { cat })
+            .getCount();
+        } else {
+          productCount = await AppDataSource.createQueryBuilder(
+            Product,
+            "product"
+          ).getCount();
+          console.log("productCount ", productCount);
+        }
       }
-      console.log("Response Product Size ", products?.length);
+
       return { products: products, count: productCount };
     } catch (err) {
       apiWriteLog.error(`Error All product `, err);
@@ -424,6 +479,20 @@ class ProductService {
           nProduct.user = user;
         }
 
+        const images: ImageGallery[] = [];
+        if (product.images) {
+          product.images.forEach((image) => {
+            if (image.id > 0) {
+              nProduct.addImage(image);
+            } else {
+              const insImage = queryRunner.manager.create(ImageGallery, image);
+              images.push(insImage);
+            }
+          });
+
+          const dbImages = queryRunner.manager.save(images);
+        }
+
         const insProduct = queryRunner.manager.create(Product, nProduct);
         saveProduct = await queryRunner.manager.save(insProduct);
         let pId = 0;
@@ -431,21 +500,6 @@ class ProductService {
           pId = saveProduct.id !== undefined ? Number(saveProduct.id) : 0;
         }
         let dbProdut: Product | null = null;
-        const images: ImageGallery[] = [];
-        // if (product.images && pId > 0) {
-        //   dbProdut = await queryRunner.manager.findOne(Product, {
-        //     where: { id: pId },
-        //   });
-        //   product.images.forEach((image) => {
-        //     if (dbProdut !== null) {
-        //       image.product = dbProdut;
-        //       const queryImage = queryRunner.manager.create(ImageGallery, image);
-        //       images.push(queryImage);
-        //     }
-        //   });
-
-        //   const dbImages = queryRunner.manager.save(images);
-        // }
 
         //Save specifications
         const listSpecs: Specification[] = [];
@@ -459,7 +513,6 @@ class ProductService {
           });
 
           const dbSpec = await queryRunner.manager.save(listSpecs);
-          console.log("Product Specs Size ", dbSpec?.length);
         }
 
         //Save Product Prices

@@ -11,6 +11,10 @@ productRoute.get(`/als/p/:name`, productController.getByAliasName);
 productRoute.get(`/als/sp/:name`, productController.getBySinglePageData);
 productRoute.get(`/vs/p/`, productController.getByMostVisitedProducts);
 
+productRoute.get(`/query/price-range`, productController.getProductByPriceRange);
+
+
+
 productRoute.post(`/:id/comments`, productController.addProductComment);
 productRoute.get(`/:id/comments`, productController.getProductAllComment);
 productRoute.get(`/:id/comments/:cid`, productController.getProductComment);

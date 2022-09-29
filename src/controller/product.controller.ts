@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { initial } from "lodash";
+import { AppDataSource } from "../database/AppDataSource";
 import { apiWriteLog } from "../logger/writeLog";
 import { Comment } from "../model/Comment";
 import { Product } from "../model/Product";
@@ -18,6 +19,34 @@ class ProductController {
       const products = await productService.getMostVisitedProducts(limit);
       resp.status(200);
       resp.send(respFormat(products, "Visited product's not found"));
+    } catch (error) {
+      apiWriteLog.error("Visited products Error ", error);
+      resp.status(200);
+      resp.send(respFormat(null, "Visited product's not found"));
+    }
+  }
+
+  async getProductByPriceRange(req: Request, resp: Response) {
+    try {
+      const { count, cat, start, end } = req.query;
+      let minPrice = esGetNumber(start);
+      let maxPrice = esGetNumber(end);
+
+      const products = await productService.getProductByPriceRange(
+        cat,
+        minPrice,
+        maxPrice
+      );
+
+      if (products) {
+        resp.status(200);
+        resp.send(
+          respFormat(products, `${products.length} product's found`, true)
+        );
+      } else {
+        resp.status(200);
+        resp.send(respFormat(null, "Visited product's not found"));
+      }
     } catch (error) {
       apiWriteLog.error("Visited products Error ", error);
       resp.status(200);
@@ -56,7 +85,9 @@ class ProductController {
         const recommended = await productService.getRecommendedProducts(
           productResp
         );
-        const newArrival = await productService.getNewArrivalProducts();
+        const newArrival = await productService.getNewArrivalProducts(
+          productResp?.category?.key
+        );
         const mostVisited = await productService.getMostVisitedProducts(8);
 
         resp.status(200);
