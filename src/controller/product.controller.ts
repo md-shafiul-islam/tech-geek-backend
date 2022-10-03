@@ -13,6 +13,89 @@ import { esGetNumber } from "../utils/esHelper";
 import respFormat from "../utils/response/respFormat";
 
 class ProductController {
+  async getProductsRangeItems(req: Request, resp: Response) {
+    try {
+      const products = await productService.getAllByPriceRange(req.query);
+      if (products) {
+        resp.status(200);
+        resp.send(
+          respFormat(products, `${products?.length} product(s) found`, true)
+        );
+      } else {
+        resp.status(202);
+        resp.send(respFormat(null, "product not found"));
+      }
+    } catch (error) {
+      apiWriteLog.error("product getAll Error ", error);
+      resp.status(202);
+      resp.send(respFormat(null, "product not found"));
+    }
+  }
+
+  async getProductsSiteMapItems(req: Request, resp: Response) {
+    try {
+      console.log("Geting  products sitemap ... ");
+      const products = await productService.getProductSiteMapItems(req.query);
+
+      if (products) {
+        resp.status(200);
+        resp.send(
+          respFormat(products, `${products?.length} Search Options found`, true)
+        );
+      } else {
+        resp.status(200);
+        resp.send(respFormat(products, `Search Options not found`));
+      }
+    } catch (error) {
+      apiWriteLog.error("Search Options found Error ", error);
+      resp.status(200);
+      resp.send(respFormat(null, "Search Options found not found"));
+    }
+  }
+  async getProductsBySearch(req: Request, resp: Response) {
+    try {
+      console.log("Geting Search products ... ");
+      const products = await productService.getProductSearchOptions();
+
+      if (products) {
+        resp.status(200);
+        resp.send(
+          respFormat(products, `${products?.length} Search Options found`, true)
+        );
+      } else {
+        resp.status(200);
+        resp.send(respFormat(products, `Search Options not found`));
+      }
+    } catch (error) {
+      apiWriteLog.error("Search Options found Error ", error);
+      resp.status(200);
+      resp.send(respFormat(null, "Search Options found not found"));
+    }
+  }
+
+  async getProductsByQuerySearch(req: Request, resp: Response) {
+    try {
+      console.log("Geting Search Query products ... ");
+      const products = await productService.getProductSearchQuery(
+        req?.params?.name
+      );
+
+      if (products) {
+        resp.status(200);
+        resp.send(
+          respFormat(products, `${products?.length} Search Query found`, true)
+        );
+      } else {
+        resp.status(200);
+        resp.send(respFormat(products, `Search Query not found`));
+      }
+    } catch (error) {
+      apiWriteLog.error("Search Query found Error ", error);
+      resp.status(200);
+      resp.send(respFormat(null, "Search Query found not found"));
+    }
+  }
+
   async getByMostVisitedProducts(req: Request, resp: Response) {
     try {
       let limit = esGetNumber(req.query.size);

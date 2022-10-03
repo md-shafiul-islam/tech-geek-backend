@@ -13,19 +13,22 @@ export class Brand {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 155 })
+  @Column({name:"public_id", unique:true, length:60})
+  publicId:string;
+
+  @Column({ length: 155, nullable:true})
   name: string;
 
-  @Column("text")
+  @Column({type:"text", nullable:true})
   description: string;
 
-  @Column({ length: 175 })
+  @Column({name:"tag_line", length: 175, nullable:true })
   tagLine: string;
 
-  @Column({ name: "logo_url", length: 205 })
+  @Column({ name: "logo_url", length: 205, nullable:true })
   logoUrl: string;
 
-  @Column({ name: "web_url", length: 105 })
+  @Column({ name: "web_url", length: 105, nullable:true })
   website: string;
 
   @OneToMany(() => Product, (product: Product) => product.brand)

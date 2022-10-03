@@ -23,7 +23,7 @@ export class Category {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({length:50})
+  @Column({ length: 50 })
   name: string;
 
   @Column({
@@ -31,8 +31,11 @@ export class Category {
   })
   description: string;
 
-  @Column({length:60})
+  @Column({ length: 60 })
   key: string;
+
+  @Column({ length: 20, name: "action_url", nullable: true })
+  actionUrl: string;
 
   @TreeChildren()
   children: Category[];

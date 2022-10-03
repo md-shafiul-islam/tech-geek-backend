@@ -2,10 +2,45 @@ import { Request, Response } from "express";
 import { apiWriteLog } from "../logger/writeLog";
 import { Brand } from "../model/Brand";
 import { brandService } from "../service/brand.service";
+import { productService } from "../service/product.service";
 import { esIsEmpty } from "../utils/esHelper";
 import respFormat from "../utils/response/respFormat";
 
 class BrandController {
+  
+  async getByBrandName(req: Request, resp: Response) {
+    try {
+      const name = req?.params?.name;
+      const brand = await brandService.getBrandByName(name);
+
+      if (brand) {
+        resp.status(200);
+        resp.send(respFormat(brand, "Brand Found", true));
+      } else {
+        resp.status(202);
+        resp.send(respFormat(brand, "Brand not Found by given id", true));
+      }
+    } catch (error) {}
+  }
+
+  async getAllProductsByBrand(req: Request, resp: Response) {
+    apiWriteLog.info("getAllProductsByBrand ", req.query);
+    const products = await productService.getAllProductBrand(req.query);
+    if (products) {
+      resp.status(200);
+      resp.send(
+        respFormat(
+          products,
+          `${products?.length} Products By Brand found`,
+          true
+        )
+      );
+    } else {
+      resp.status(202);
+      resp.send(respFormat(null, "Product not found by Brand"));
+    }
+  }
+
   async getAll(req: Request, resp: Response) {
     apiWriteLog.info("Test writ file", { test: "Object is write" });
     const brands = await brandService.getAllBrand();
@@ -60,9 +95,11 @@ class BrandController {
   }
 
   async update(req: Request, resp: Response) {
-    const { id, name, description, tagLine, logoUrl, website } = req.body;
+    const { id, name, description, tagLine, logoUrl, website, publicId } =
+      req.body;
     const brand: Brand = {
       id,
+      publicId,
       name,
       description,
       tagLine,

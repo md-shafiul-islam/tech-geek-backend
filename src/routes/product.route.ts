@@ -12,6 +12,11 @@ productRoute.get(`/als/sp/:name`, productController.getBySinglePageData);
 productRoute.get(`/vs/p/`, productController.getByMostVisitedProducts);
 
 productRoute.get(`/query/price-range`, productController.getProductByPriceRange);
+productRoute.get(`/query/search`, productController.getProductsBySearch);
+productRoute.get(`/qr/search/:name`, productController.getProductsByQuerySearch);
+productRoute.get(`/sitemap/query`, productController.getProductsSiteMapItems);
+productRoute.get(`/range/query`, productController.getProductsRangeItems);
+
 
 
 

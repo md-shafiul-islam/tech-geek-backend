@@ -1,6 +1,5 @@
-import { orderBy } from "lodash";
 import { ParsedQs } from "qs";
-import { Brackets, EntityManager, Repository, UpdateResult } from "typeorm";
+import { Brackets, Repository, UpdateResult } from "typeorm";
 import { AppDataSource } from "../database/AppDataSource";
 import { apiWriteLog } from "../logger/writeLog";
 import { Comment } from "../model/Comment";
@@ -13,6 +12,7 @@ import { Specification } from "../model/Specification";
 import { TrackProductVisit } from "../model/TrackProductVisit";
 import { User } from "../model/User";
 import { esGetNumber, esIsEmpty } from "../utils/esHelper";
+import { brandService } from "./brand.service";
 import { categoryService } from "./category.service";
 
 class ProductService {
@@ -21,6 +21,105 @@ class ProductService {
   private initRepository(): void {
     if (this.productRepository === null) {
       this.productRepository = AppDataSource.getRepository(Product);
+    }
+  }
+
+  async getAllProductBrand(query: any) {
+    try {
+      let skip = esGetNumber(query.start);
+      let take = esGetNumber(query.end);
+      let brand = query.brand;
+      let odr = !esIsEmpty(query.odr) ? query.odr : "DESC";
+
+      let products = null;
+      if (take > 0) {
+        products = await AppDataSource.createQueryBuilder(Product, "product")
+          .where("product.brand = :brand", { brand })
+          .leftJoinAndSelect("product.category", "category")
+          .orderBy("product.createDate", odr)
+          .skip(skip)
+          .take(take)
+          .getMany();
+      } else {
+        products = await AppDataSource.createQueryBuilder(Product, "product")
+          .where("product.brand = :brand", { brand })
+          .leftJoinAndSelect("product.category", "category")
+          .orderBy("product.createDate", odr)
+          .getMany();
+      }
+
+      return products;
+    } catch (error) {
+      apiWriteLog.error("Geting Search Products Error ", error);
+      return null;
+    }
+  }
+
+  async getProductSiteMapItems(query: any) {
+    try {
+      let skip = esGetNumber(query.start);
+      let take = esGetNumber(query.end);
+      let odr = !esIsEmpty(query.odr) ? query.odr : "DESC";
+
+      const products = await AppDataSource.createQueryBuilder(
+        Product,
+        "product"
+      )
+        .select([
+          "product.id",
+          "product.aliasName",
+          "product.title",
+          "product.createDate",
+          "product.updateDate",
+        ])
+        .leftJoinAndSelect("product.category", "category")
+        .orderBy("product.createDate", odr)
+        .skip(skip)
+        .take(take)
+        .getMany();
+
+      return products;
+    } catch (error) {
+      apiWriteLog.error("Geting Search Products Error ", error);
+      return null;
+    }
+  }
+
+  async getProductSearchQuery(query: any) {
+    try {
+      query = `%${query}%`;
+
+      const products = await AppDataSource.createQueryBuilder(
+        Product,
+        "product"
+      )
+        .where("product.title like :query", { query })
+        .leftJoinAndSelect("product.prices", "prices")
+        .leftJoinAndSelect("product.category", "category")
+        .orderBy("product.createDate", "DESC")
+        .getMany();
+
+      return products;
+    } catch (error) {
+      apiWriteLog.error("Geting Search Products Error ", error);
+      return null;
+    }
+  }
+
+  async getProductSearchOptions() {
+    try {
+      const products = await AppDataSource.createQueryBuilder(
+        Product,
+        "product"
+      )
+        .select(["product.title", "product.aliasName"])
+        .orderBy("product.createDate", "DESC")
+        .getMany();
+
+      return products;
+    } catch (error) {
+      apiWriteLog.error("Geting Search Products Error ", error);
+      return null;
     }
   }
 
@@ -47,6 +146,36 @@ class ProductService {
       }
     } catch (error) {
       apiWriteLog.error("Add Visit Count Error ", error);
+    }
+  }
+
+  async getAllByPriceRange(query: any) {
+    try {
+      let minPrice = esGetNumber(query.start),
+        maxPrice = esGetNumber(query.end);
+      const products = await AppDataSource.createQueryBuilder(
+        Product,
+        "product"
+      )
+        .leftJoinAndSelect("product.prices", "prices")
+        .leftJoinAndSelect("product.category", "category")
+        .where("category.key = :cat", { cat: query.cat })
+        .andWhere(
+          new Brackets((qb) => {
+            qb.where("product.price BETWEEN :minPrice AND :maxPrice", {
+              minPrice,
+              maxPrice,
+            });
+          })
+        )
+        .orderBy("product.createDate", "DESC")
+        .take(500)
+        .getMany();
+
+      return products;
+    } catch (error) {
+      apiWriteLog.error("Product By Range Error ", error);
+      return null;
     }
   }
 
@@ -305,7 +434,7 @@ class ProductService {
 
   async getAll(query: any): Promise<any> {
     try {
-      const { start, end, count, cat } = query;
+      const { start, end, count, cat, page } = query;
 
       let offset = esGetNumber(start);
       let limit = esGetNumber(end);
@@ -345,12 +474,14 @@ class ProductService {
         if (limit > 0) {
           products = await AppDataSource.createQueryBuilder(Product, "product")
             .leftJoinAndSelect("product.prices", "prices")
+            .leftJoinAndSelect("product.category", "category")
             .orderBy("product.createDate", "DESC")
             .skip(offset)
             .take(limit)
             .getMany();
         } else {
           products = await AppDataSource.createQueryBuilder(Product, "product")
+            .leftJoinAndSelect("product.category", "category")
             .orderBy("product.createDate", "DESC")
             .getMany();
         }
@@ -374,11 +505,51 @@ class ProductService {
         }
       }
 
-      return { products: products, count: productCount };
+      let phoneProducts = null,
+        mixProducts = null,
+        brands=null;
+      if (page === "home") {
+        phoneProducts = await this.getFeaturesProductsByCat("SmartPhone", 8);
+        mixProducts = await this.getFeaturesProductsByCat(null, 8);
+        brands = await brandService.getAllBrand();
+      }
+
+      return {
+        products: products,
+        count: productCount,
+        fProduct: mixProducts,
+        rSProduct: phoneProducts,
+        brands
+      };
     } catch (err) {
       apiWriteLog.error(`Error All product `, err);
       return null;
     }
+  }
+
+  async getFeaturesProductsByCat(cat: any, take: number) {
+    let products = null;
+
+    try {
+      if (!esIsEmpty(cat)) {
+        products = await AppDataSource.createQueryBuilder(Product, "product")
+          .leftJoinAndSelect("product.category", "category")
+          .where("category.key = :cat", { cat })
+          .orderBy("product.createDate", "DESC")
+          .take(take)
+          .getMany();
+      } else {
+        products = await AppDataSource.createQueryBuilder(Product, "product")
+          .leftJoinAndSelect("product.category", "category")
+          .orderBy("product.createDate", "DESC")
+          .take(take)
+          .getMany();
+      }
+    } catch (error) {
+      apiWriteLog.error("getFeaturesProductsByCat Error ", error);
+    }
+
+    return products;
   }
 
   async update(

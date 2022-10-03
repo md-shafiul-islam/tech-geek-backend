@@ -1,3 +1,4 @@
+import { ParsedQs } from "qs";
 import { Repository } from "typeorm";
 import { AppDataSource } from "../database/AppDataSource";
 import { apiWriteLog } from "../logger/writeLog";
@@ -10,6 +11,19 @@ class BrandService {
   private initRepository(): void {
     if (this.brandRepository === null) {
       this.brandRepository = AppDataSource.getRepository(Brand);
+    }
+  }
+
+  async getBrandByName(name: string) {
+    this.initRepository();
+    try {
+      const brand = await this.brandRepository?.findOne({
+        where: { name: name },
+      });
+      return brand;
+    } catch (err) {
+      apiWriteLog.error("Error getBrandByName ", err);
+      return null;
     }
   }
 

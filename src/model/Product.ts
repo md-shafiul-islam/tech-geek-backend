@@ -51,6 +51,9 @@ export class Product {
   @Column({ name: "image_url", length: 205 })
   imageUrl: string;
 
+  @Column({ name: "video_url", type: "text", nullable: true })
+  videoUrl: string;
+
   @OneToMany(
     () => ProductPrice,
     (productPrice: ProductPrice) => productPrice.product
