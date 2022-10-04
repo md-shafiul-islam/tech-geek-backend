@@ -4,7 +4,9 @@
   "main": "./server.ts",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon --config nodemon.json --max-old-space-size=4096 ./server.ts"
+    "dev": "nodemon --config nodemon.json --max-old-space-size=4096 ./server.ts",
+    "start": "node ./dist/server.js",
+    "build": "tsc -p ."
   },
   "dependencies": {
     "bcrypt": "^5.0.1",

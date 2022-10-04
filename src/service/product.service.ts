@@ -507,19 +507,19 @@ class ProductService {
 
       let phoneProducts = null,
         mixProducts = null,
-        brands=null;
+        brands = null;
       if (page === "home") {
         phoneProducts = await this.getFeaturesProductsByCat("SmartPhone", 8);
         mixProducts = await this.getFeaturesProductsByCat(null, 8);
-        brands = await brandService.getAllBrand();
       }
+      brands = await brandService.getAllBrand();
 
       return {
         products: products,
         count: productCount,
         fProduct: mixProducts,
         rSProduct: phoneProducts,
-        brands
+        brands,
       };
     } catch (err) {
       apiWriteLog.error(`Error All product `, err);

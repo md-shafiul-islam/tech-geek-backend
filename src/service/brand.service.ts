@@ -55,7 +55,9 @@ class BrandService {
   async getAllBrand(): Promise<Brand[] | null | undefined> {
     this.initRepository();
     try {
-      const brands = await this.brandRepository?.find();
+      const brands = await this.brandRepository?.find({
+        order: { name: "ASC" },
+      });
       return brands;
     } catch (err) {
       apiWriteLog.error(`Error All Brand `, err);
