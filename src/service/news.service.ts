@@ -3,15 +3,27 @@ import { AppDataSource } from "../database/AppDataSource";
 import { apiWriteLog } from "../logger/writeLog";
 import { ImageGallery } from "../model/ImageGallery";
 import { MetaDeta } from "../model/MetaData";
-import { News } from "../model/news";
+import { News } from "../model/News";
 import { esIsEmpty } from "../utils/esHelper";
 
 class NewsService {
+
   private newsRepository: Repository<News> | null = null;
 
   private initRepository(): void {
     if (this.newsRepository === null) {
       this.newsRepository = AppDataSource.getRepository(News);
+    }
+  }
+
+  async getCount() {
+    this.initRepository();
+    try {
+      const count = await this.newsRepository?.count();
+      return count;
+    } catch (err) {
+      apiWriteLog.error("Error News Count ", err);
+      return 0;
     }
   }
 

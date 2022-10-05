@@ -6,11 +6,23 @@ import { Brand } from "../model/Brand";
 import { esIsEmpty } from "../utils/esHelper";
 
 class BrandService {
+  
   private brandRepository: Repository<Brand> | null = null;
 
   private initRepository(): void {
     if (this.brandRepository === null) {
       this.brandRepository = AppDataSource.getRepository(Brand);
+    }
+  }
+
+  async getCount() {
+    this.initRepository();
+    try {
+      const count = await this.brandRepository?.count();
+      return count;
+    } catch (err) {
+      apiWriteLog.error("Error Brand Count Error ", err);
+      return 0;
     }
   }
 

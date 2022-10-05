@@ -1,0 +1,14 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.HttpException = void 0;
+class HttpException extends Error {
+    status;
+    message;
+    constructor(staus, message) {
+        super(message);
+        this.status = staus;
+        this.message = message;
+    }
+}
+exports.HttpException = HttpException;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiSHR0cEV4Y2VwdGlvbi5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3NyYy9leGNlcHRpb24vSHR0cEV4Y2VwdGlvbi50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7QUFBQSxNQUFhLGFBQWMsU0FBUSxLQUFLO0lBQy9CLE1BQU0sQ0FBUztJQUNmLE9BQU8sQ0FBUztJQUV2QixZQUFZLEtBQWEsRUFBRSxPQUFlO1FBQ3hDLEtBQUssQ0FBQyxPQUFPLENBQUMsQ0FBQztRQUNmLElBQUksQ0FBQyxNQUFNLEdBQUcsS0FBSyxDQUFDO1FBQ3BCLElBQUksQ0FBQyxPQUFPLEdBQUcsT0FBTyxDQUFDO0lBQ3pCLENBQUM7Q0FDRjtBQVRELHNDQVNDIiwic291cmNlc0NvbnRlbnQiOlsiZXhwb3J0IGNsYXNzIEh0dHBFeGNlcHRpb24gZXh0ZW5kcyBFcnJvciB7XHJcbiAgcHVibGljIHN0YXR1czogbnVtYmVyO1xyXG4gIHB1YmxpYyBtZXNzYWdlOiBzdHJpbmc7XHJcblxyXG4gIGNvbnN0cnVjdG9yKHN0YXVzOiBudW1iZXIsIG1lc3NhZ2U6IHN0cmluZykge1xyXG4gICAgc3VwZXIobWVzc2FnZSk7XHJcbiAgICB0aGlzLnN0YXR1cyA9IHN0YXVzO1xyXG4gICAgdGhpcy5tZXNzYWdlID0gbWVzc2FnZTtcclxuICB9XHJcbn1cclxuIl19

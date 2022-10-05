@@ -24,6 +24,17 @@ class ProductService {
     }
   }
 
+  async getCount() {
+    this.initRepository();
+    try {
+      const count = await this.productRepository?.count();
+      return count;
+    } catch (err) {
+      apiWriteLog.error("Error Product Count Error ", err);
+      return 0;
+    }
+  }
+
   async getAllProductBrand(query: any) {
     try {
       let skip = esGetNumber(query.start);

@@ -1,0 +1,15 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AppDataSource = void 0;
+const typeorm_1 = require("typeorm");
+const _1 = require(".");
+const AppDataSource = new typeorm_1.DataSource((0, _1.dbConnectionOption)());
+exports.AppDataSource = AppDataSource;
+AppDataSource.initialize()
+    .then(() => {
+    console.log("DB Connection ");
+})
+    .catch((err) => {
+    console.log("Connection Error, ", err);
+});
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiQXBwRGF0YVNvdXJjZS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3NyYy9kYXRhYmFzZS9BcHBEYXRhU291cmNlLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7OztBQUFBLHFDQUFxQztBQUNyQyx3QkFBdUM7QUFFdkMsTUFBTSxhQUFhLEdBQUcsSUFBSSxvQkFBVSxDQUFDLElBQUEscUJBQWtCLEdBQUUsQ0FBQyxDQUFDO0FBVWxELHNDQUFhO0FBUnRCLGFBQWEsQ0FBQyxVQUFVLEVBQUU7S0FDdkIsSUFBSSxDQUFDLEdBQUcsRUFBRTtJQUNULE9BQU8sQ0FBQyxHQUFHLENBQUMsZ0JBQWdCLENBQUMsQ0FBQztBQUNoQyxDQUFDLENBQUM7S0FDRCxLQUFLLENBQUMsQ0FBQyxHQUFHLEVBQUUsRUFBRTtJQUNiLE9BQU8sQ0FBQyxHQUFHLENBQUMsb0JBQW9CLEVBQUUsR0FBRyxDQUFDLENBQUM7QUFDekMsQ0FBQyxDQUFDLENBQUMiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBEYXRhU291cmNlIH0gZnJvbSBcInR5cGVvcm1cIjtcclxuaW1wb3J0IHsgZGJDb25uZWN0aW9uT3B0aW9uIH0gZnJvbSBcIi5cIjtcclxuXHJcbmNvbnN0IEFwcERhdGFTb3VyY2UgPSBuZXcgRGF0YVNvdXJjZShkYkNvbm5lY3Rpb25PcHRpb24oKSk7XHJcblxyXG5BcHBEYXRhU291cmNlLmluaXRpYWxpemUoKVxyXG4gIC50aGVuKCgpID0+IHtcclxuICAgIGNvbnNvbGUubG9nKFwiREIgQ29ubmVjdGlvbiBcIik7XHJcbiAgfSlcclxuICAuY2F0Y2goKGVycikgPT4ge1xyXG4gICAgY29uc29sZS5sb2coXCJDb25uZWN0aW9uIEVycm9yLCBcIiwgZXJyKTtcclxuICB9KTtcclxuXHJcbmV4cG9ydCB7IEFwcERhdGFTb3VyY2UgfTtcclxuIl19

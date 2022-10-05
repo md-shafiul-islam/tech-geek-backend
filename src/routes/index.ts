@@ -8,6 +8,7 @@ import { postRoute } from "./post.route";
 import { productRoute } from "./product.route";
 import { ratingRoute } from "./rating.route";
 import { reviewRoute } from "./review.route";
+import { siteMapRoute } from "./sitemap.route";
 import { specKeyRoute } from "./spec.key.route";
 import { specTypeRoute } from "./spec.type.route";
 import { specificationRoute } from "./specification.route";
@@ -41,8 +42,8 @@ export default (app: Application) => {
   app.use(newsUrl, newsRoute);
   app.use(specificationUrl, specificationRoute);
   app.use(metaUrl, metaRoute);
-  app.use(intialsUrl, initialsRoute)
-  
+  app.use(intialsUrl, initialsRoute);
+  app.use(`/api/sitemap`, siteMapRoute);
 
   app.get("/", (req: Request, resp: Response) => {
     resp.sendStatus(200);

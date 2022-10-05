@@ -1,0 +1,6 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = (data, message, status = false) => {
+    return { response: data, message, status };
+};
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVzcEZvcm1hdC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uL3NyYy91dGlscy9yZXNwb25zZS9yZXNwRm9ybWF0LnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQUEsa0JBQWUsQ0FBQyxJQUFTLEVBQUUsT0FBZSxFQUFFLFNBQWtCLEtBQUssRUFBRSxFQUFFO0lBQ3JFLE9BQU8sRUFBRSxRQUFRLEVBQUUsSUFBSSxFQUFFLE9BQU8sRUFBRSxNQUFNLEVBQUUsQ0FBQztBQUM3QyxDQUFDLENBQUMiLCJzb3VyY2VzQ29udGVudCI6WyJleHBvcnQgZGVmYXVsdCAoZGF0YTogYW55LCBtZXNzYWdlOiBzdHJpbmcsIHN0YXR1czogYm9vbGVhbiA9IGZhbHNlKSA9PiB7XHJcbiAgcmV0dXJuIHsgcmVzcG9uc2U6IGRhdGEsIG1lc3NhZ2UsIHN0YXR1cyB9O1xyXG59O1xyXG4iXX0=

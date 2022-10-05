@@ -15,6 +15,17 @@ class PostService {
     }
   }
 
+  async getCount() {
+    this.initRepository();
+    try {
+      const count = await this.postRepository?.count();
+      return count;
+    } catch (err) {
+      apiWriteLog.error("Error Post Count ", err);
+      return 0;
+    }
+  }
+
   async save(post: Post) {
     let resp: Post | null = null;
     if (post) {

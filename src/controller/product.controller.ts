@@ -75,7 +75,7 @@ class ProductController {
 
   async getProductsByQuerySearch(req: Request, resp: Response) {
     try {
-      console.log("Geting Search Query products ... ");
+      console.log("Geting Search Query products ... Query, ", req?.params?.name);
       const products = await productService.getProductSearchQuery(
         req?.params?.name
       );

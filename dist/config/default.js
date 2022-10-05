@@ -1,0 +1,9 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const portNum = process.env.PORT !== undefined ? parseInt(process.env.PORT) : 4500;
+exports.default = {
+    appPort: portNum,
+    appHost: "localhost",
+    dbUrl: "",
+};
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZGVmYXVsdC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uL2NvbmZpZy9kZWZhdWx0LnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQUEsTUFBTSxPQUFPLEdBQ1gsT0FBTyxDQUFDLEdBQUcsQ0FBQyxJQUFJLEtBQUssU0FBUyxDQUFDLENBQUMsQ0FBQyxRQUFRLENBQUMsT0FBTyxDQUFDLEdBQUcsQ0FBQyxJQUFJLENBQUMsQ0FBQyxDQUFDLENBQUMsSUFBSSxDQUFDO0FBRXJFLGtCQUFlO0lBQ2IsT0FBTyxFQUFFLE9BQU87SUFDaEIsT0FBTyxFQUFFLFdBQVc7SUFDcEIsS0FBSyxFQUFFLEVBQUU7Q0FDVixDQUFDIiwic291cmNlc0NvbnRlbnQiOlsiY29uc3QgcG9ydE51bSA9XHJcbiAgcHJvY2Vzcy5lbnYuUE9SVCAhPT0gdW5kZWZpbmVkID8gcGFyc2VJbnQocHJvY2Vzcy5lbnYuUE9SVCkgOiA0NTAwO1xyXG5cclxuZXhwb3J0IGRlZmF1bHQge1xyXG4gIGFwcFBvcnQ6IHBvcnROdW0sXHJcbiAgYXBwSG9zdDogXCJsb2NhbGhvc3RcIixcclxuICBkYlVybDogXCJcIixcclxufTtcclxuIl19

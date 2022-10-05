@@ -1,0 +1,31 @@
+import { UpdateResult } from "typeorm";
+import { Comment } from "../model/Comment";
+import { Product } from "../model/Product";
+declare class ProductService {
+    private productRepository;
+    private initRepository;
+    getCount(): Promise<number | undefined>;
+    getAllProductBrand(query: any): Promise<Product[] | null>;
+    getProductSiteMapItems(query: any): Promise<Product[] | null>;
+    getProductSearchQuery(query: any): Promise<Product[] | null>;
+    getProductSearchOptions(): Promise<Product[] | null>;
+    saveVisitCount(id: number, aliasName: string): Promise<void>;
+    getAllByPriceRange(query: any): Promise<Product[] | null>;
+    getProductByPriceRange(cat: any, minPrice: number, maxPrice: number): Promise<Product[] | null>;
+    getMostVisitedProducts(limit: number): Promise<Product[] | null>;
+    getNewArrivalProducts(cat: string): Promise<Product[] | null>;
+    getAliasName(query: any): Promise<Product | null>;
+    getRecommendedProducts(product: Product): Promise<Product[] | null>;
+    addComment(comment: Comment): Promise<Comment | null>;
+    getProductByAllyName(aliasName: string): Promise<Product | null | undefined>;
+    save(product: Partial<Product>): Promise<Product | null>;
+    getById(id: number): Promise<Product | null | undefined>;
+    getAll(query: any): Promise<any>;
+    getFeaturesProductsByCat(cat: any, take: number): Promise<Product[] | null>;
+    update(product: Partial<Product>): Promise<UpdateResult | null | undefined>;
+    delete(id: number): Promise<import("typeorm").DeleteResult | null | undefined>;
+    private mapProduct;
+    saveViaJson(product: Product): Promise<Product | null | undefined>;
+}
+export declare const productService: ProductService;
+export {};
