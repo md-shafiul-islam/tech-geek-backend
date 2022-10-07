@@ -46,7 +46,7 @@ class NewsService {
         const images:ImageGallery[] = [];
         const metadatas:MetaDeta[] = [];
 
-        news.images&&news.images.map((image)=>{
+        news.images&&news.images.map((image:ImageGallery)=>{
           if(image.id > 0){
             nNews.addImage(image);
           }else{
@@ -57,7 +57,7 @@ class NewsService {
         const dbImages = await queryRunner.manager.save(images);
         nNews.addAllImage(dbImages);
 
-        news.metaDatas&&news.metaDatas.map((meta)=>{
+        news.metaDatas&&news.metaDatas.map((meta:MetaDeta)=>{
           if(meta.id > 0){
             nNews.addMetaData(meta);
           }else{
