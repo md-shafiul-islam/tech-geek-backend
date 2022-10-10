@@ -26,7 +26,6 @@ const specTypeUrl = `/api/specification-types`;
 const newsUrl = `/api/news`;
 const specificationUrl = "/api/specifications";
 const metaUrl = "/api/meta-datas";
-const tagUrl = "/api/tags";
 const intialsUrl = "/api/intials";
 
 export default (app: Application) => {

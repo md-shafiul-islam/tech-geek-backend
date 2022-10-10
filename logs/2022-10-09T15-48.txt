@@ -1,0 +1,14 @@
+getAllProductsByBrand , >> OBJ >> {
+  "brand": "Huawei",
+  "cat": "SmartPhone",
+  "msg": "getAllProductsByBrand "
+}Test writ file, >> OBJ >> {
+  "test": "Object is write",
+  "msg": "Test writ file"
+}Test writ file, >> OBJ >> {
+  "test": "Object is write",
+  "msg": "Test writ file"
+}Test writ file, >> OBJ >> {
+  "test": "Object is write",
+  "msg": "Test writ file"
+}

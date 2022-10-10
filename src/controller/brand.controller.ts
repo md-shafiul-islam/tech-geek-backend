@@ -7,7 +7,6 @@ import { esIsEmpty } from "../utils/esHelper";
 import respFormat from "../utils/response/respFormat";
 
 class BrandController {
-  
   async getByBrandName(req: Request, resp: Response) {
     try {
       const name = req?.params?.name;
@@ -36,7 +35,7 @@ class BrandController {
         )
       );
     } else {
-      resp.status(202);
+      resp.status(200);
       resp.send(respFormat(null, "Product not found by Brand"));
     }
   }
@@ -48,7 +47,7 @@ class BrandController {
       resp.status(200);
       resp.send(respFormat(brands, "Brand found", true));
     } else {
-      resp.status(202);
+      resp.status(200);
       resp.send(respFormat(brands, "Brand not found"));
     }
   }

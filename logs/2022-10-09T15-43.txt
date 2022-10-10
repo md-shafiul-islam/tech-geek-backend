@@ -1,0 +1,14 @@
+Test writ file, >> OBJ >> {
+  "test": "Object is write",
+  "msg": "Test writ file"
+}Test writ file, >> OBJ >> {
+  "test": "Object is write",
+  "msg": "Test writ file"
+}Test writ file, >> OBJ >> {
+  "test": "Object is write",
+  "msg": "Test writ file"
+}getAllProductsByBrand , >> OBJ >> {
+  "brand": "Dell",
+  "cat": "SmartPhone",
+  "msg": "getAllProductsByBrand "
+}
