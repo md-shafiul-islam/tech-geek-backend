@@ -7,7 +7,7 @@ export const dbConnectionOption = ():DataSourceOptions => {
     host: "localhost",
     port: 3306,
     username: "njha9dd3mal0ma8g",
-    password: "01725^*^)@(Sa",
+    password: "01725^*^)@(S",
     database: "tech_geek",
     logging: false,
     synchronize: true,
