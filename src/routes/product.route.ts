@@ -20,7 +20,11 @@ productRoute.get(`/range/query`, productController.getProductsRangeItems);
 
 
 
+productRoute.post(`/aliasNames/`, productController.getProductByAliasNames);
 productRoute.post(`/:id/comments`, productController.addProductComment);
+
+
+
 productRoute.get(`/:id/comments`, productController.getProductAllComment);
 productRoute.get(`/:id/comments/:cid`, productController.getProductComment);
 

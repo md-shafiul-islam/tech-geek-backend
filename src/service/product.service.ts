@@ -24,6 +24,29 @@ class ProductService {
     }
   }
 
+  async getAllByAliasNames(aliasName: any) {
+    console.log("getAllByAliasNames Body ", aliasName);
+    try {
+      let products = null;
+      if (aliasName) {
+        if (Array.isArray(aliasName.names)) {
+          products = await AppDataSource.createQueryBuilder(Product, "product")
+            .where("product.aliasName IN(:names)", { names: aliasName.names })
+            .leftJoinAndSelect("product.category", "category")
+            .leftJoinAndSelect("product.specifications", "specifications")
+            .leftJoinAndSelect("specifications.key", "key")
+            .leftJoinAndSelect("product.avgRating", "avgRating")
+            .getMany();
+        }
+      }
+
+      return products;
+    } catch (err) {
+      apiWriteLog.error("Error Product Count Error ", err);
+      return [];
+    }
+  }
+
   async getCount() {
     this.initRepository();
     try {

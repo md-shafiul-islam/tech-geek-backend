@@ -13,6 +13,25 @@ import { esGetNumber } from "../utils/esHelper";
 import respFormat from "../utils/response/respFormat";
 
 class ProductController {
+  
+  async getProductByAliasNames(req: Request, resp: Response) {
+    try {
+      const products = await productService.getAllByAliasNames(req.body);
+      if (products) {
+        resp.status(200);
+        resp.send(
+          respFormat(products, `${products?.length} product(s) found`, true)
+        );
+      } else {
+        resp.status(202);
+        resp.send(respFormat(null, "product not found"));
+      }
+    } catch (error) {
+      apiWriteLog.error("product getAll Error ", error);
+      resp.status(202);
+      resp.send(respFormat(null, "product not found"));
+    }
+  }
   async getProductsRangeItems(req: Request, resp: Response) {
     try {
       const products = await productService.getAllByPriceRange(req.query);
@@ -75,7 +94,10 @@ class ProductController {
 
   async getProductsByQuerySearch(req: Request, resp: Response) {
     try {
-      console.log("Geting Search Query products ... Query, ", req?.params?.name);
+      console.log(
+        "Geting Search Query products ... Query, ",
+        req?.params?.name
+      );
       const products = await productService.getProductSearchQuery(
         req?.params?.name
       );
