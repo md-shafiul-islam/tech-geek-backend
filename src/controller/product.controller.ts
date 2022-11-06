@@ -13,7 +13,25 @@ import { esGetNumber } from "../utils/esHelper";
 import respFormat from "../utils/response/respFormat";
 
 class ProductController {
-  
+  async getProducstByFilter(req: Request, resp: Response) {
+    try {
+      const products = await productService.getAllProducstByFilter(req.body);
+      if (products) {
+        resp.status(200);
+        resp.send(
+          respFormat(products, `${products?.length} product(s) found`, true)
+        );
+      } else {
+        resp.status(202);
+        resp.send(respFormat(null, "Get product By Filter not found"));
+      }
+    } catch (error) {
+      apiWriteLog.error("product getAll Error ", error);
+      resp.status(202);
+      resp.send(respFormat(null, "product not found"));
+    }
+  }
+
   async getProductByAliasNames(req: Request, resp: Response) {
     try {
       const products = await productService.getAllByAliasNames(req.body);

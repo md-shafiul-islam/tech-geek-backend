@@ -24,6 +24,66 @@ class ProductService {
     }
   }
 
+  async getAllProducstByFilter(filter: any) {
+    try {
+      let products = null;
+      console.log("Filter Props ", filter);
+      console.log("filter.range?.start ", filter.range?.start);
+      console.log("filter.range?.end ", filter.range?.end);
+      console.log("filter.type", filter.type);
+      console.log("filter?.brands", filter?.brands);
+      if (filter) {
+        let minPrice = esGetNumber(filter.range?.start),
+          maxPrice = esGetNumber(filter.range?.end);
+
+        if (filter.brands?.length > 0) {
+          products = await AppDataSource.createQueryBuilder(Product, "product")
+            .leftJoinAndSelect("product.prices", "prices")
+            .leftJoinAndSelect("product.category", "category")
+            .where("category.key = :cat", { cat: filter.type })
+            .andWhere(
+              new Brackets((qb) => {
+                qb.where("product.price BETWEEN :minPrice AND :maxPrice", {
+                  minPrice,
+                  maxPrice,
+                });
+              })
+            )
+            .andWhere(
+              new Brackets((qb) => {
+                qb.where("product.brand IN(:brands)", {
+                  brands: filter?.brands,
+                });
+              })
+            )
+            .orderBy("product.createDate", "DESC")
+            .take(500)
+            .getMany();
+        } else {
+          products = await AppDataSource.createQueryBuilder(Product, "product")
+            .leftJoinAndSelect("product.prices", "prices")
+            .leftJoinAndSelect("product.category", "category")
+            .where("category.key = :cat", { cat: filter.type })
+            .andWhere(
+              new Brackets((qb) => {
+                qb.where("product.price BETWEEN :minPrice AND :maxPrice", {
+                  minPrice,
+                  maxPrice,
+                });
+              })
+            )
+            .orderBy("product.createDate", "DESC")
+            .take(500)
+            .getMany();
+        }
+      }
+      return products;
+    } catch (error) {
+      apiWriteLog.error("Product By Range Error ", error);
+      return null;
+    }
+  }
+
   async getAllByAliasNames(aliasName: any) {
     console.log("getAllByAliasNames Body ", aliasName);
     try {

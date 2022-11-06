@@ -1,0 +1,12 @@
+getAllProductsByBrand , >> OBJ >> {
+  "brand": "Acer",
+  "cat": "SmartPhone",
+  "msg": "getAllProductsByBrand "
+}getAllProductsByBrand , >> OBJ >> {
+  "brand": "Acer",
+  "cat": "SmartPhone",
+  "msg": "getAllProductsByBrand "
+}Test writ file, >> OBJ >> {
+  "test": "Object is write",
+  "msg": "Test writ file"
+}
