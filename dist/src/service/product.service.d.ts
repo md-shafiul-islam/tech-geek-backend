@@ -4,6 +4,8 @@ import { Product } from "../model/Product";
 declare class ProductService {
     private productRepository;
     private initRepository;
+    getAllProducstByFilter(filter: any): Promise<Product[] | null>;
+    getAllByAliasNames(aliasName: any): Promise<Product[] | null>;
     getCount(): Promise<number | undefined>;
     getAllProductBrand(query: any): Promise<Product[] | null>;
     getProductSiteMapItems(query: any): Promise<Product[] | null>;

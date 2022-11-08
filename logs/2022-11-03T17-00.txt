@@ -1,3 +1,0 @@
-Geting Search Products Error , >> OBJ >> {
-  "message": "No metadata for \"Product\" was found."
-}

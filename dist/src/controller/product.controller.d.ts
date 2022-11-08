@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 declare class ProductController {
+    getProducstByFilter(req: Request, resp: Response): Promise<void>;
+    getProductByAliasNames(req: Request, resp: Response): Promise<void>;
     getProductsRangeItems(req: Request, resp: Response): Promise<void>;
     getProductsSiteMapItems(req: Request, resp: Response): Promise<void>;
     getProductsBySearch(req: Request, resp: Response): Promise<void>;

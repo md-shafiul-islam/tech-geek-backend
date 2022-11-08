@@ -1,4 +1,0 @@
-Test writ file, >> OBJ >> {
-  "test": "Object is write",
-  "msg": "Test writ file"
-}
